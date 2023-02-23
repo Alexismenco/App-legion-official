@@ -1,0 +1,311 @@
+<%- include ("./partials/cabecera") %> 
+<%- rolAdmin!=false?include("./partials/navbar"):include("./partials/navbarUser")%> 
+
+
+<style>
+   
+@media (max-width: 600px) {
+    .formulario{
+      width: 100%;
+    }
+}
+    
+
+    .conten{
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    font-size: 16px;
+    line-height: 1.42857143;
+    color: #333333;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    float: left;
+    width: 50%;
+    }
+
+    .formulario{
+        -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    font-size: 16px;
+    line-height: 1.42857143;
+    color: #333333;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 10px;
+    margin-top: 35px;
+    }
+
+    @media (max-width: 600px) {
+        .formulario{
+          width: 70%;
+        }
+    }
+
+
+    
+</style>
+ 
+
+    <div class="text-center m-auto">
+    
+        <form class="container formulario col-3 m-auto" action="/ordenes" method="post"  enctype="multipart/form-data">
+            <h1 class="h3 mb-3 fw-normal text-info"><b>Nueva orden</b></h1>
+
+            <div class="m-2 bg-warning text-center rounded-top rounded-bottom">
+              <li class="text-success p-2" style="list-style:none;"><b>Mi saldo $ <%= saldo %> CLP</b></li>
+            </div>
+
+            <div class="form-floating text-dark mt-5">
+              
+              <select class="form-control bg-light text-info text-center mt-2 categoria" id="categoria" name="categoria" required>
+                <option disabled selected>Categoria</option>
+                <% for(i=0;i<categorias.length;i++){ %> 
+                  <%  %>
+
+                    <option name="categoria" class="text-center" value="<%= categorias[i]  %>"> <%= categorias[i] %>  </option>
+                <% } %> 
+            </select>
+            
+            </div>
+            
+           
+            <div class="form-floating text-dark mt-5"id="servicioantes">
+              <span class="text-info" ><b>Servicios</b></span>
+                
+              <%# Guardar servicios de cada categoria en un select diferente luego style.visibility hidden %>
+              <select class="form-control bg-dark text-info mt-2 text-center" id="servicio" name="servicio" required>
+                <option value="" disabled selected>Selecciona un servicio</option>
+                <% for(i=0;i<servicios.length;i++){ %> 
+                  
+                      <script>
+
+                        var precioServicio;
+                        var categoria = document.getElementById('categoria')
+                        var servicio = document.getElementById('servicio')
+
+                       
+
+                        categoria.addEventListener("click", function() {
+
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if (child.text.includes('Tiktok') && !categoria.value.includes('Tiktok')){
+                                  child.style.display = "none";
+                                  
+                                } else if(child.text.includes('Instagram') && !categoria.value.includes('Instagram')){
+                                  if (child.text.includes('Instagram') && !categoria.value.includes('Instagram')){
+                                  child.style.display = "none";
+                                  }
+                                }else if(child.text.includes('Facebook') && !categoria.value.includes('Facebook')){
+                                  if (child.text.includes('Facebook') && !categoria.value.includes('Facebook')){
+                                  child.style.display = "none";
+                                  }
+                                }else if(child.text.includes('Youtube') && !categoria.value.includes('Youtube')){
+                                  if (child.text.includes('Youtube') && !categoria.value.includes('Youtube')){
+                                  child.style.display = "none";
+                                  }
+                                }else if(child.text.includes('Spotify') && !categoria.value.includes('Spotify')){
+                                  if (child.text.includes('Spotify') && !categoria.value.includes('Spotify')){
+                                  child.style.display = "none";
+                                  }
+                                }else if(child.text.includes('Twitter') && !categoria.value.includes('Twitter')){
+                                  if (child.text.includes('Twitter') && !categoria.value.includes('Twitter')){
+                                  child.style.display = "none";
+                                  }
+                                }else if(child.text.includes('Cuenta') && !categoria.value.includes('Cuenta')){
+                                  if (child.text.includes('Cuenta') && !categoria.value.includes('Cuenta')){
+                                  child.style.display = "none";
+                                  }
+                                }else if(child.text.includes('Monetización') && !categoria.value.includes('Monetización')){
+                                  if (child.text.includes('Monetización') && !categoria.value.includes('Monetización')){
+                                  child.style.display = "none";
+                                  }
+                                }else if(child.text.includes('Verificación') && !categoria.value.includes('Verificación')){
+                                  if (child.text.includes('Verificación') && !categoria.value.includes('Verificación')){
+                                  child.style.display = "none";
+                                  }
+                                }
+                            }
+
+
+
+                            var optionti = document.createElement('option');
+                          optionti.value="<%= servicios[i].Categoria=='Tiktok'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optionti.text="<%= servicios[i].Categoria=='Tiktok'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+
+                          var optioni = document.createElement('option');
+                          optioni.value="<%= servicios[i].Categoria=='Instagram'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optioni.text="<%= servicios[i].Categoria=='Instagram'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          var optionf = document.createElement('option');
+                          optionf.value="<%= servicios[i].Categoria=='Facebook'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optionf.text="<%= servicios[i].Categoria=='Facebook'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          var options = document.createElement('option');
+                          options.value="<%= servicios[i].Categoria=='Spotify'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          options.text="<%= servicios[i].Categoria=='Spotify'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          var optiony = document.createElement('option');
+                          optiony.value="<%= servicios[i].Categoria=='Youtube'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optiony.text="<%= servicios[i].Categoria=='Youtube'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          var optiontw = document.createElement('option');
+                          optiontw.value="<%= servicios[i].Categoria=='Twitter'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optiontw.text="<%= servicios[i].Categoria=='Twitter'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          var optioncd = document.createElement('option');
+                          optioncd.value="<%= servicios[i].Categoria=='Digitales'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optioncd.text="<%= servicios[i].Categoria=='Digitales'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          var optionm = document.createElement('option');
+                          optionm.value="<%= servicios[i].Categoria=='Monetización'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optionm.text="<%= servicios[i].Categoria=='Monetización'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          var optionv = document.createElement('option');
+                          optionv.value="<%= servicios[i].Categoria=='Verificación'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optionv.text="<%= servicios[i].Categoria=='Verificación'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+
+                          if('Tiktok'==categoria.value && optionti.value!='' && optionti.text!=''){
+                            // Hacer que se borren los nodos del select
+                            servicio.appendChild(optionti)
+                          }else if('Instagram'==categoria.value && optioni.value!='' && optioni.text!=''){
+                            servicio.appendChild(optioni)
+                            
+
+                          }else if('Spotify'==categoria.value && options.value!='' && options.text!=''){
+                            servicio.appendChild(options)
+
+                          }else if('Youtube'==categoria.value && optiony.value!='' && optiony.text!=''){
+                            servicio.appendChild(optiony)
+
+                          }else if('Twitter'==categoria.value && optiontw.value!='' && optiontw.text!=''){
+                            servicio.appendChild(optiontw)
+
+                          }else if('Facebook'==categoria.value && optionf.value!='' && optionf.text!=''){
+                            servicio.appendChild(optionf)
+
+                          }else if('Cuentas digitales'==categoria.value && optioncd.value!='' && optioncd.text!=''){
+                            servicio.appendChild(optioncd)
+
+                          }else if('Monetización'==categoria.value && optionm.value!='' && optionm.text!=''){
+                            servicio.appendChild(optionm)
+
+                          }else if('Verificación'==categoria.value && optionv.value!='' && optionv.text!=''){
+                            servicio.appendChild(optionv)
+
+                          }
+                        
+
+                        })
+
+                      </script>
+                <% } %> 
+
+            </select>
+
+
+              </div>
+            <div class="form-floating text-dark mt-5">
+              <span class="text-info"><b>Link</b></span>
+              <input type="text" name="link" class="form-control email" required>
+            </div>
+            <div class="form-floating text-dark mt-5">
+              <span class="text-info"><b>Cantidad</b></span>
+                <input type="number" id="cantidad" name="cantidad" class="form-control email" required>
+              </div>
+
+              <div class="form-floating text-dark mt-5">
+                <span class="text-info"><b>Precio</b></span> <br>
+                <input type="button" id="calcular" class="btn btn-success mt-2" value="Calcular precio">
+
+                <p class="text-success mt-3"><b>$ 
+                <input type="number" id="preciofinal" class="text-center" required disabled>
+
+                  
+                  <script>
+                    // Click precio
+                    var cantidad = document.getElementById('cantidad')
+                    var calcular = document.getElementById('calcular')
+                    var preciofinal = document.getElementById('preciofinal')
+                    preciofinal.style.background='transparent'
+                    preciofinal.style.border='none'
+                    preciofinal.style.color='white'
+
+
+
+                    calcular.addEventListener("click", function() {
+
+                          var precio = "";
+                          var primerEspacio=false;
+
+                                for (i =0; i <= (servicio.value.length -1); i++) { 
+                                  
+                                  if(servicio.value[i]==' '){
+                                    primerEspacio=true;
+                                  }
+                                  if(primerEspacio==true){
+                                    precio+=servicio.value[i]
+                                  }
+                                }
+                                preciofinal.text =precio*cantidad.value
+                                preciofinal.value =precio*cantidad.value
+
+                                console.log(preciofinal)
+                        })
+                  </script>
+              </b></p>
+              </div>
+
+              
+
+              <div class="d-flex justify-content-center">
+                <div class="btn btn-primary btn-rounded mt-5">
+                    <label class="form-label text-white m-1" for="customFile2">Añadir imagen 1</label> 
+                    <input type="file" name="img"  required/>
+                </div>
+            </div><span class="mt-2 text-danger">Obligatorio</span>
+
+            <div class="d-flex justify-content-center">
+              <div class="btn btn-primary btn-rounded mt-5">
+                  <label class="form-label text-white m-1" for="customFile2">Añadir imagen 2</label> 
+                  <input type="file" name="img2"   />
+              </div>
+          </div><span class="mt-2 text-white">Opcional</span>
+
+          <div class="d-flex justify-content-center">
+            <div class="btn btn-primary btn-rounded mt-5">
+                <label class="form-label text-white m-1" for="customFile2">Añadir imagen 3</label> 
+                <input type="file" name="img3"  />
+            </div>
+        </div><span class="mt-2 text-white">Opcional</span>
+
+          
+      
+    
+            <div class="help">
+            
+        
+            </div>
+
+            <input type="submit"  class="form-control w-100 mt-4 btn btn-lg btn-info" value="Comprar"  />
+
+                
+    
+           
+          </form>
+          <br>
+    </div>
+
+
+
+<%- include ("./partials/footer") %> 
+<%- include ("./partials/pie") %> 

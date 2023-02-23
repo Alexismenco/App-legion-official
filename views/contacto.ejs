@@ -1,0 +1,50 @@
+<%- include ("./partials/cabecera") %> 
+<%- rolAdmin!=false?include("./partials/navbar"):include("./partials/navbarUser")%> 
+
+<style>
+
+    
+  @media (max-width: 600px) {
+    .contenedor{
+      width: 80%;
+      height: 100%;
+    }
+    .email .password {
+      min-width: 80%;
+    }
+  }
+</style>
+
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="false">
+
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="./img/contacto/IMAGEN PRINCIPAL ARRIBA.png" class="d-block w-100" alt="..." height="500px">
+    
+      
+      <div class="carousel-caption">
+        <h3 style="font-weight: 700; font-size: 85px; margin-bottom: 150px;">Contactar</h3>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<form  class="container contenedor col-3 text-center mt-5 " action="/enviarcontacto" method="post">
+    <span class="text-info">Nombre</span><span class="text-danger">*</span>
+    <input placeholder="Ether" class="form-control mt-2 bg-dark text-info" type="text" name="nombre" required>
+    <br><br>
+    <span class="text-info">Email</span><span class="text-danger">*</span>
+    <input placeholder="ether@gmail.com" class="form-control mt-2  bg-dark text-info " type="text" name="correo" required>
+    <br><br>
+    <span class="text-info">Comentario</span><span class="text-danger">*</span>
+    <br>
+    <textarea placeholder="Escribe tu mensaje..." class="form-control mt-2  bg-dark text-info"  name="comentario" id="" cols="30" rows="10" required></textarea>
+    <br><br>
+    <input class="btn btn-info" type="submit" value="Enviar">
+
+</form>
+<%- include ("./partials/footer") %> 
+<%- include ("./partials/pie") %> 
