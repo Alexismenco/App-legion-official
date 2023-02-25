@@ -54,8 +54,11 @@
 
   
   <div id="sideNavigation" class="sidenav">
+
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    
+  <canvas id="opop" > </canvas>
+  
+  <div style="position: absolute; top: 40px" class="">  
     <div>
       <div class="d-flex justify-content-center mb-4 ">
           <img src="<%= fotoPerfil!==null? 'perfil/'+fotoPerfil.Foto_perfil:'img/perfil-estandar.jpg' %>"
@@ -89,6 +92,7 @@
         <b>Cerrar sesión</b>
       </button>
     </form>
+  </div>
 
   </div>
  
@@ -96,10 +100,50 @@
   <!-- Add all your websites page content here -->
   </div>
 
+  <script>
+    canvas =  document.getElementById("opop");
+
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width = document.body.offsetWidth;
+    const h = canvas.height = document.body.offsetHeight;
+  
+
+    const cols = Math.floor(w/20)+1 ;
+    const ypos = Array(cols).fill(0);
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0,w,h);
+
+    function matrix(){
+      ctx.fillStyle = "#0001";
+      ctx.fillRect(0,0,w,h);
+
+      ctx.fillStyle = "#0f0";
+      ctx.font = "15px monospace";
+
+      ypos.forEach((y, ind)=>{
+
+        const text= String.fromCharCode(Math.random() * 128);
+        const x = ind *20;
+        ctx.fillText(text, x, y);
+
+        if(y>100 + Math.random()* 10000) ypos [ind] = 0;
+
+        else ypos [ind] = y + 20;
+
+      })
+    }
+
+    setInterval(matrix, 50);
+  </script>
+
   
   <style>
-
-
+    #opop{
+      height: 100vh;
+      margin-top: -70px;
+      width: 100%;
+    }
 
     /* The side navigation menu */
 .sidenav {
@@ -109,7 +153,7 @@
     z-index: 1; /* Stay on top */
     top: 0;
     left: 0;
-    background-color: #111; /* Black*/
+    background-color: transparent; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
