@@ -32,8 +32,8 @@
           
       </div>
       <div class="m-2 ">
-        <img src="<%= fotoPerfil!==null? 'perfil/'+fotoPerfil.Foto_perfil:'img/perfil-estandar.jpg' %>"
-        class="rounded-circle" alt="example placeholder" style="width: 50px;" />
+        <img src="<%= fotoPerfil.Foto_perfil!==null? 'perfil/'+fotoPerfil.Foto_perfil:'img/perfil-estandar.jpg' %>"
+        class="rounded-circle"  style="height: 45px;" />
       </div>
         
         <div class="m-2 btn btn-primary">
@@ -61,7 +61,7 @@
   <div style="position: absolute; top: 40px" class="">  
     <div>
       <div class="d-flex justify-content-center mb-4 ">
-          <img src="<%= fotoPerfil!==null? 'perfil/'+fotoPerfil.Foto_perfil:'img/perfil-estandar.jpg' %>"
+          <img src="<%= fotoPerfil.Foto_perfil!==null? 'perfil/'+fotoPerfil.Foto_perfil:'img/perfil-estandar.jpg' %>"
           class="rounded-circle" alt="example placeholder" style="width: 80%;" />
       </div>
       <div class="d-flex justify-content-center">
@@ -96,9 +96,9 @@
 
   </div>
  
-  <div id="main">
-  <!-- Add all your websites page content here -->
-  </div>
+  
+  <!-- <div id="main"> Add all your websites page content here  </div> -->
+ 
 
   <script>
     canvas =  document.getElementById("opop");

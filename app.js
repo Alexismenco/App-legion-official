@@ -9,9 +9,12 @@ const nodemailer=require('nodemailer');
 require('dotenv').config();
 const chalk = require('chalk');
 const jwt = require('./utils/jwt');
-const {prevenirLogin ,permisosAdmin}=require('./middleware/autenticacion')
+const {prevenirLogin ,permisosAdmin}=require('./middleware/autenticacion');
 const { urlencoded } = require('express');
 const { resolve4 } = require('dns');
+const axios = require('axios');
+const querystring = require('querystring');
+const crypto = require('crypto');
 
 
 // configuracion nodmeailer
@@ -88,8 +91,11 @@ app.get('/', async (req,res) => {
     console.log("Error consulta: "+err.message);
     fotoPerfil=null;
 }
-var fondo ='contacto/IMAGEN FONDO.png'
+  var fondo ='contacto/IMAGEN FONDO.png'
 
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
 
     res.render('index',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
 })
@@ -134,8 +140,9 @@ app.post("/login", async function (req,res){
       var rolAdmin=req.headers.cookie || false ;
       var nouser=false;
       var fondo ='inicio/IMAGEN INICIO FONDO.png';
+      var msg='Credenciales incorrectas'
 
-      res.render('login',{rolAdmin:rolAdmin, nouser:nouser, fondo:fondo})
+      res.render('login',{rolAdmin:rolAdmin, nouser:nouser,msg:msg, fondo:fondo})
       
     }else{
       const token = await jwt.generarToken(usuario);
@@ -371,6 +378,7 @@ app.post('/passwordNew', async (req,res) => {
 
 })
 
+
 // Nuevo pedido
 app.get('/ordenes',permisosAdmin, async (req,res) => {
   var rolAdmin=req.headers.cookie || false ;
@@ -442,6 +450,9 @@ app.get('/ordenes',permisosAdmin, async (req,res) => {
     res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
     res.redirect("/login");
 
+  }
+  if(saldo=='0undefined'){
+    saldo=0;
   }
 
   var fondo= 'ordenes/fondo.jpg'
@@ -609,7 +620,9 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
     }
     
   }else{
-
+    if(saldo=='0undefined'){
+      saldo=0;
+    }
     res.render('declined',{rolAdmin:rolAdmin, saldo:saldo, fondo:fondo})
 
   }
@@ -657,7 +670,49 @@ app.get('/mispedidos', async (req,res) => {
   if(rolAdmin == false){
     saldo=0;
   }
+  // Consultar pedidos
+  var consultaPedidos='SELECT * from "Pedidos"  WHERE "emailuser"=$1'
+  const parametros17=[email];
+  var respuestaPedidos;
+  try{
+    respuestaPedidos = await conexion.query(consultaPedidos,parametros17);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var resPedidos;
 
+  if(respuestaPedidos.rows==undefined){
+    resPedidos=false;
+  }else{
+    resPedidos=respuestaPedidos.rows
+  }
+
+  // Agregar servicio al pedido
+  var consultaServicios2 = 'SELECT * FROM "Servicios";'
+  var respuestaServicios2;
+  try{
+    respuestaServicios2 = await conexion.query(consultaServicios2);
+
+  }catch(err){
+    console.log("Error consulta: "+err.message);
+  }
+
+  var pedidos =resPedidos.map(p => {
+    Object.keys(respuestaServicios2.rows).forEach(element => {
+      if(respuestaServicios2.rows[element].id==p.idservicio){
+
+       p.idservicio= respuestaServicios2.rows[element].Nombre+ ' ' +respuestaServicios2.rows[element].Descripcion
+       return p
+      }
+      
+    });
+    return p
+});
+
+// colocar en el for de pedidos ejs .idservicio
+console.log(pedidos)
+
+  
    // Consulta foto perfil
    var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
    const parametros15=[email];
@@ -676,8 +731,11 @@ app.get('/mispedidos', async (req,res) => {
   
     }
   var fondo ='mispedidos/FONDO MIS PEDIDOS.jpg'
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
 
-  res.render('pedidos',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+  res.render('pedidos',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, pedidos:pedidos})
 })
 
 // Actualizar foto perfil
@@ -769,11 +827,66 @@ try{
 }
 
 var fondo ='inicio/IMAGEN INICIO FONDO.png'
-
-
+if(saldo=='0undefined'){
+  saldo=0;
+}
   res.render('buy',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
 
 })
+
+// Procesar saldo
+app.post("/buy",async function(req,res){
+  
+  const apiKey = '4255F5C6-A1DC-44A1-BE9F-7664802LA10B';
+  const apiUrl = 'https://sandbox.flow.cl/api';
+  const secretKey = '27d067021fd365482fee3149f37b920235fe554b';
+
+  
+    const commerceOrder = 'ORDEN_DE_COMERCIO'; // Orden de comercio única
+    const subject = 'Descripción de la orden'; // Descripción de la orden
+    const currency = 'CLP'; // Moneda de la orden
+    const amount = 10000; // Monto de la orden en la moneda especificada
+    const email = 'ejemplo@correo.com'; // Correo electrónico del pagador
+    const paymentMethod = 9; // Identificador del medio de pago (9 para Webpay Plus)
+    const urlConfirmation = 'http://localhost:3000/mispedidos'; // URL de confirmación de pago
+    const urlReturn = 'http://localhost:3000/'; // URL de retorno del comercio
+    const payerName = 'Nombre del pagador';
+    const phoneNumber = '123456789';
+    const address = 'Dirección del pagador';
+    const city = 'Ciudad del pagador';
+    const country = 'País del pagador';
+    const paymentType = 1;
+    const payment_currency = currency;
+    const timeout = 15;
+  
+    const params = `apiKey=${apiKey}&commerceOrder=${commerceOrder}&subject=${subject}&currency=${currency}&amount=${amount}&email=${email}&paymentMethod=${paymentMethod}&urlConfirmation=${urlConfirmation}&urlReturn=${urlReturn}&payerName=${payerName}&phoneNumber=${phoneNumber}&address=${address}&city=${city}&country=${country}&paymentType=${paymentType}&payment_currency=${payment_currency}&timeout=${timeout}`;
+    const signature = crypto.createHmac('sha1', secretKey).update(params).digest('hex');
+  
+
+
+  // Configurar la solicitud HTTP
+  const config = {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  };
+  
+
+  // Enviar la solicitud HTTP
+  axios.post(`${apiUrl}/payment/create`, querystring.stringify({
+    ...params,
+    s: signature,
+  }), config)
+    .then(response => {
+      const { url, token } = response.data;
+      console.log(`URL de pago: ${url}?token=${token}`);
+      // Redirigir al pagador a la URL de pago
+    })
+    .catch(error => {
+      console.log(error.response.data);
+      // Ocurrió un error al crear la orden de pago
+    });
+
+})
+
 
 // Ayuda
 app.get('/ayuda', async (req,res) => {
@@ -836,7 +949,9 @@ app.get('/ayuda', async (req,res) => {
 }
 
   var fondo ='inicio/IMAGEN INICIO FONDO.png'
-
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
 
   res.render('ayuda',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
 })
