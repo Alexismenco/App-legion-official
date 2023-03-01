@@ -506,7 +506,7 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
   var agno= new Date().getFullYear();
   var mes= new Date().getMonth();
   var dia= new Date().getDate()
-  var fecha= agno+'-'+mes+'-'+dia
+  var fecha= agno+'-'+(mes +1 )+'-'+dia
 
 
   if(precioTotal<= saldo){
@@ -709,8 +709,6 @@ app.get('/mispedidos', async (req,res) => {
     return p
 });
 
-// colocar en el for de pedidos ejs .idservicio
-console.log(pedidos)
 
   
    // Consulta foto perfil
