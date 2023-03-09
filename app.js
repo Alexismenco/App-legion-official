@@ -906,7 +906,7 @@ let monto = entero.toString() + decimal.toString().slice(1);
 
  // Conexion transbank
 const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
-const response = await tx.create('j0ek0e9rokfoe', '123', monto, 'http://localhost:3000/pago');
+const response = await tx.create('j0ek0e9rokfoe', '123', monto, 'app-legion-official-production.up.railway.app/pago');
 
 const token = response.token;
 const urlt = response.url;
@@ -987,7 +987,6 @@ const urlt = response.url;
   // Si la recarga es exitosa
   if(response.status== 'AUTHORIZED' && response.response_code==0){
     var saldoTotal= response.amount + parseInt(saldo);
-    console.log(saldoTotal)
 
     var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
     const parametros18=[saldoTotal, email];
@@ -1176,7 +1175,6 @@ app.get('/ayuda', async (req,res) => {
     var saldoFinal=''
     var primerPunto=false;
     for (i =0; i <= saldo.length ; i++) { 
-      console.log(typeof(saldo[i]))
                                   
       if(saldo[i]=='.'){
         primerPunto=true;
