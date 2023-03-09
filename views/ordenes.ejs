@@ -81,7 +81,7 @@
               <span class="text-info" ><b>Servicios</b></span>
                 
               <%# Guardar servicios de cada categoria en un select diferente luego style.visibility hidden %>
-              <select class="form-control bg-dark text-info mt-2 text-center" id="servicio" name="servicio" required>
+              <select class="form-control bg-dark text-info mt-2 text-center" id="servicio" name="servicio"  required>
                 <option value="" disabled selected>Selecciona un servicio</option>
                 <% for(i=0;i<servicios.length;i++){ %> 
                   
@@ -91,52 +91,15 @@
                         var categoria = document.getElementById('categoria')
                         var servicio = document.getElementById('servicio')
 
-
-                        categoria.addEventListener("click", function() {
-
-                            for (var i = 0; i < servicio.children.length; ++i) {
+                        for (var i = 0; i < servicio.children.length; ++i) {
                                 var child = servicio.children[i];
-                                if (child.text.includes('Tiktok') && !categoria.value.includes('Tiktok')){
-                                  child.style.display = "none";
-                                  
-                                } else if(child.text.includes('Instagram') && !categoria.value.includes('Instagram')){
-                                  if (child.text.includes('Instagram') && !categoria.value.includes('Instagram')){
-                                  child.style.display = "none";
-                                  }
-                                }else if(child.text.includes('Facebook') && !categoria.value.includes('Facebook')){
-                                  if (child.text.includes('Facebook') && !categoria.value.includes('Facebook')){
-                                  child.style.display = "none";
-                                  }
-                                }else if(child.text.includes('Youtube') && !categoria.value.includes('Youtube')){
-                                  if (child.text.includes('Youtube') && !categoria.value.includes('Youtube')){
-                                  child.style.display = "none";
-                                  }
-                                }else if(child.text.includes('Spotify') && !categoria.value.includes('Spotify')){
-                                  if (child.text.includes('Spotify') && !categoria.value.includes('Spotify')){
-                                  child.style.display = "none";
-                                  }
-                                }else if(child.text.includes('Twitter') && !categoria.value.includes('Twitter')){
-                                  if (child.text.includes('Twitter') && !categoria.value.includes('Twitter')){
-                                  child.style.display = "none";
-                                  }
-                                }else if(child.text.includes('Cuenta') && !categoria.value.includes('Cuenta')){
-                                  if (child.text.includes('Cuenta') && !categoria.value.includes('Cuenta')){
-                                  child.style.display = "none";
-                                  }
-                                }else if(child.text.includes('Monetización') && !categoria.value.includes('Monetización')){
-                                  if (child.text.includes('Monetización') && !categoria.value.includes('Monetización')){
-                                  child.style.display = "none";
-                                  }
-                                }else if(child.text.includes('Verificación') && !categoria.value.includes('Verificación')){
-                                  if (child.text.includes('Verificación') && !categoria.value.includes('Verificación')){
-                                  child.style.display = "none";
-                                  }
-                                }
+                                child.style.display = "none";
                             }
 
 
+                        categoria.addEventListener("click", function() {
 
-                            var optionti = document.createElement('option');
+                          var optionti = document.createElement('option');
                           optionti.value="<%= servicios[i].Categoria=='Tiktok'?servicios[i].id+' '+servicios[i].Precio:'' %>"
                           optionti.text="<%= servicios[i].Categoria=='Tiktok'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
 
@@ -176,30 +139,87 @@
                           if('Tiktok'==categoria.value && optionti.value!='' && optionti.text!=''){
                             // Hacer que se borren los nodos del select
                             servicio.appendChild(optionti)
+
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
+
                           }else if('Instagram'==categoria.value && optioni.value!=''){
                             servicio.appendChild(optioni)
-                            
+
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
 
                           }else if('Spotify'==categoria.value && options.value!='' ){
                             servicio.appendChild(options)
 
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
+
                           }else if('Youtube'==categoria.value && optiony.value!='' ){
                             servicio.appendChild(optiony)
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
 
                           }else if('Twitter'==categoria.value && optiontw.value!='' ){
                             servicio.appendChild(optiontw)
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
 
                           }else if('Facebook'==categoria.value && optionf.value!='' ){
                             servicio.appendChild(optionf)
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
 
                           }else if('Cuentas digitales'==categoria.value && optioncd.value!='' ){
                             servicio.appendChild(optioncd)
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
 
                           }else if('Monetización'==categoria.value && optionm.value!=''){
                             servicio.appendChild(optionm)
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
 
                           }else if('Verificación'==categoria.value && optionv.value!=''){
                             servicio.appendChild(optionv)
+                            for (var i = 0; i < servicio.children.length; ++i) {
+                                var child = servicio.children[i];
+                                if(!child.text.includes(categoria.value)){
+                                  child.style.display = "none";
+                                }
+                            }
 
                           }
                         
@@ -209,6 +229,10 @@
                       </script>
                 <% } %> 
 
+            </select>
+
+            <!--  -->
+            <select class="form-control bg-dark text-info mt-2 text-center" id="servicio" name="servicio" style="display: none;" required>
             </select>
 
 
