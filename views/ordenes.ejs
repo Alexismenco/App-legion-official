@@ -91,7 +91,6 @@
                         var categoria = document.getElementById('categoria')
                         var servicio = document.getElementById('servicio')
 
-                       
 
                         categoria.addEventListener("click", function() {
 
@@ -177,29 +176,29 @@
                           if('Tiktok'==categoria.value && optionti.value!='' && optionti.text!=''){
                             // Hacer que se borren los nodos del select
                             servicio.appendChild(optionti)
-                          }else if('Instagram'==categoria.value && optioni.value!='' && optioni.text!=''){
+                          }else if('Instagram'==categoria.value && optioni.value!=''){
                             servicio.appendChild(optioni)
                             
 
-                          }else if('Spotify'==categoria.value && options.value!='' && options.text!=''){
+                          }else if('Spotify'==categoria.value && options.value!='' ){
                             servicio.appendChild(options)
 
-                          }else if('Youtube'==categoria.value && optiony.value!='' && optiony.text!=''){
+                          }else if('Youtube'==categoria.value && optiony.value!='' ){
                             servicio.appendChild(optiony)
 
-                          }else if('Twitter'==categoria.value && optiontw.value!='' && optiontw.text!=''){
+                          }else if('Twitter'==categoria.value && optiontw.value!='' ){
                             servicio.appendChild(optiontw)
 
-                          }else if('Facebook'==categoria.value && optionf.value!='' && optionf.text!=''){
+                          }else if('Facebook'==categoria.value && optionf.value!='' ){
                             servicio.appendChild(optionf)
 
-                          }else if('Cuentas digitales'==categoria.value && optioncd.value!='' && optioncd.text!=''){
+                          }else if('Cuentas digitales'==categoria.value && optioncd.value!='' ){
                             servicio.appendChild(optioncd)
 
-                          }else if('Monetización'==categoria.value && optionm.value!='' && optionm.text!=''){
+                          }else if('Monetización'==categoria.value && optionm.value!=''){
                             servicio.appendChild(optionm)
 
-                          }else if('Verificación'==categoria.value && optionv.value!='' && optionv.text!=''){
+                          }else if('Verificación'==categoria.value && optionv.value!=''){
                             servicio.appendChild(optionv)
 
                           }
