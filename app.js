@@ -906,7 +906,7 @@ let monto = entero.toString() + decimal.toString().slice(1);
 
  // Conexion transbank
 const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
-const response = await tx.create('j0ek0e9rokfoe', '123', monto, 'app-legion-official-production.up.railway.app/pago');
+const response = await tx.create('j0ek0e9rokfoe', '123', monto, 'http://app-legion-official-production.up.railway.app/pago');
 
 const token = response.token;
 const urlt = response.url;
