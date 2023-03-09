@@ -1,7 +1,7 @@
 <%- include ("./partials/cabecera") %> 
 <%- rolAdmin!=false?include("./partials/navbar"):include("./partials/navbarUser")%> 
 
-<h1 class="text-info text-center mb-5"><b>Agregar saldo</b></h1>
+<h1 class="text-info text-center mb-5"><b>Agrega saldo a tu cuenta</b></h1>
 
 
 
@@ -12,9 +12,10 @@
 
 <div class=" w-75 container text-center">
     <div class="row row-cols-auto">
-        <h4>Estamos trabajando para incorporar esta functionalidad</h4>
 
-        <form class=" mt-5" action="/buy" method="post">
+        <form class="m-auto mt-5" action="/buy" method="post">
+            <p class="text-info"><b>Saldo a recargar  $</b></p>
+            <input class="btn btn-dark" type="number" placeholder="Cantidad" name="monto" required>
             
             <button class="w-100 mt-4 btn btn-lg btn-info" type="submit">Agregar saldo</button>
            

@@ -12,9 +12,9 @@ const jwt = require('./utils/jwt');
 const {prevenirLogin ,permisosAdmin}=require('./middleware/autenticacion');
 const { urlencoded } = require('express');
 const { resolve4 } = require('dns');
-const axios = require('axios');
-const querystring = require('querystring');
-const crypto = require('crypto');
+
+const WebpayPlus = require("transbank-sdk").WebpayPlus; // CommonJS
+const { Options, IntegrationApiKeys, Environment, IntegrationCommerceCodes } = require("transbank-sdk"); // CommonJS
 
 
 // configuracion nodmeailer
@@ -64,7 +64,7 @@ app.get('/', async (req,res) => {
       if(saldo[i]=='.'){
         primerPunto=true;
       }
-      if(primerPunto==false){
+      if(primerPunto==false && saldo[i]!=undefined){
         saldoFinal+=saldo[i];
       }
     }
@@ -420,7 +420,7 @@ app.get('/ordenes',permisosAdmin, async (req,res) => {
       if(saldo[i]=='.'){
         primerPunto=true;
       }
-      if(primerPunto==false){
+      if(primerPunto==false && saldo[i]!=undefined){
         saldoFinal+=saldo[i];
       }
     }
@@ -606,7 +606,7 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
           if(saldo[i]=='.'){
             primerPunto=true;
           }
-          if(primerPunto==false){
+          if(primerPunto==false && saldo[i]!=undefined){
             saldoFinal+=saldo[i];
           }
         }
@@ -660,7 +660,7 @@ app.get('/mispedidos', async (req,res) => {
           if(saldo[i]=='.'){
             primerPunto=true;
           }
-          if(primerPunto==false){
+          if(primerPunto==false && saldo[i]!=undefined){
             saldoFinal+=saldo[i];
           }
         }
@@ -765,6 +765,8 @@ app.post('/perfil', async (req, res) =>{
 
 // Agregar saldo
 app.get('/buy', async (req,res) => {
+  
+  // Si inicio sesion
   var rolAdmin=req.headers.cookie || false ;
 
   // obtener email
@@ -796,7 +798,7 @@ if(respuestaSaldo.rows[0]==undefined){
     if(saldo[i]=='.'){
       primerPunto=true;
     }
-    if(primerPunto==false){
+    if(primerPunto==false && saldo[i]!=undefined){
       saldoFinal+=saldo[i];
     }
   }
@@ -834,61 +836,181 @@ if(saldo=='0undefined'){
 
 // Procesar saldo
 app.post("/buy",async function(req,res){
-  
-  const apiKey = '4255F5C6-A1DC-44A1-BE9F-7664802LA10B';
-  const apiUrl = 'https://sandbox.flow.cl/api';
-  const secretKey = '27d067021fd365482fee3149f37b920235fe554b';
+  var rolAdmin=req.headers.cookie || false ;
 
-  
-    const commerceOrder = 'ORDEN_DE_COMERCIO'; // Orden de comercio única
-    const subject = 'Descripción de la orden'; // Descripción de la orden
-    const currency = 'CLP'; // Moneda de la orden
-    const amount = 10000; // Monto de la orden en la moneda especificada
-    const email = 'ejemplo@correo.com'; // Correo electrónico del pagador
-    const paymentMethod = 9; // Identificador del medio de pago (9 para Webpay Plus)
-    const urlConfirmation = 'http://localhost:3000/mispedidos'; // URL de confirmación de pago
-    const urlReturn = 'http://localhost:3000/'; // URL de retorno del comercio
-    const payerName = 'Nombre del pagador';
-    const phoneNumber = '123456789';
-    const address = 'Dirección del pagador';
-    const city = 'Ciudad del pagador';
-    const country = 'País del pagador';
-    const paymentType = 1;
-    const payment_currency = currency;
-    const timeout = 15;
-  
-    const params = `apiKey=${apiKey}&commerceOrder=${commerceOrder}&subject=${subject}&currency=${currency}&amount=${amount}&email=${email}&paymentMethod=${paymentMethod}&urlConfirmation=${urlConfirmation}&urlReturn=${urlReturn}&payerName=${payerName}&phoneNumber=${phoneNumber}&address=${address}&city=${city}&country=${country}&paymentType=${paymentType}&payment_currency=${payment_currency}&timeout=${timeout}`;
-    const signature = crypto.createHmac('sha1', secretKey).update(params).digest('hex');
-  
+  // obtener email
+var email = await jwt.obtenerEmail(rolAdmin);
 
+// Consulta saldo
+var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
+const parametros6=[email];
+var respuestaSaldo;
+try{
+  respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
+} catch(err){
+    console.log("Error consulta: "+err.message);
+}
+var saldo;
 
-  // Configurar la solicitud HTTP
-  const config = {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  };
-  
+if(respuestaSaldo.rows[0]==undefined){
+  saldo=0;
+  res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+  res.redirect("/login");
+}else{
+  saldo = respuestaSaldo.rows[0].Saldo;
 
-  // Enviar la solicitud HTTP
-  axios.post(`${apiUrl}/payment/create`, querystring.stringify({
-    ...params,
-    s: signature,
-  }), config)
-    .then(response => {
-      const { url, token } = response.data;
-      console.log(`URL de pago: ${url}?token=${token}`);
-      // Redirigir al pagador a la URL de pago
-    })
-    .catch(error => {
-      console.log(error.response.data);
-      // Ocurrió un error al crear la orden de pago
-    });
+  // Quitar decimales a saldo
+  var saldoFinal=''
+  var primerPunto=false;
+  for (i =0; i <= saldo.length ; i++) { 
+                                
+    if(saldo[i]=='.'){
+      primerPunto=true;
+    }
+    if(primerPunto==false && saldo[i]!=undefined){
+      saldoFinal+=saldo[i];
+    }
+  }
+  saldo=saldoFinal
+}
 
+if(rolAdmin == false){
+  saldo=0;
+}
+
+// Consulta foto perfil
+var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
+const parametros15=[email];
+var respuestaFotoPerfil;
+try{
+  respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
+} catch(err){
+    console.log("Error consulta: "+err.message);
+}
+var fotoPerfil;
+try{
+  fotoPerfil=respuestaFotoPerfil.rows[0];
+}catch(err){
+  console.log("Error consulta: "+err.message);
+  fotoPerfil=null;
+}
+
+var fondo ='inicio/IMAGEN INICIO FONDO.png'
+if(saldo=='0undefined'){
+  saldo=0;
+}
+
+let entero = req.body.monto;
+let decimal = 0.00;
+let monto = entero.toString() + decimal.toString().slice(1);
+
+ // Conexion transbank
+const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+const response = await tx.create('j0ek0e9rokfoe', '123', monto, 'http://localhost:3000/pago');
+
+const token = response.token;
+const urlt = response.url;
+
+  res.render('pagar',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, token:token, urlt:urlt, monto:monto})
 })
 
+// Regreso de la orden en transbank 
+  app.get("/pago",async function(req,res){
+    const token = req.query.token_ws
+    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+    const response = await tx.commit(token);
 
-// Ayuda
-app.get('/ayuda', async (req,res) => {
-  var rolAdmin=req.headers.cookie || false ;
+    var rolAdmin=req.headers.cookie || false ;
+
+    // obtener email
+  var email = await jwt.obtenerEmail(rolAdmin);
+  
+  // Consulta saldo
+  var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
+  const parametros6=[email];
+  var respuestaSaldo;
+  try{
+    respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var saldo;
+  
+  if(respuestaSaldo.rows[0]==undefined){
+    saldo=0;
+    res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+    res.redirect("/login");
+  }else{
+    saldo = respuestaSaldo.rows[0].Saldo;
+  
+    // Quitar decimales a saldo
+    var saldoFinal=''
+    var primerPunto=false;
+    for (i =0; i <= saldo.length ; i++) { 
+                                  
+      if(saldo[i]=='.'){
+        primerPunto=true;
+      }
+      if(primerPunto==false && saldo[i]!=undefined){
+        saldoFinal+=saldo[i];
+      }
+    }
+    saldo=saldoFinal
+  }
+  
+  if(rolAdmin == false){
+    saldo=0;
+  }
+  
+  // Consulta foto perfil
+  var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
+  const parametros15=[email];
+  var respuestaFotoPerfil;
+  try{
+    respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var fotoPerfil;
+  try{
+    fotoPerfil=respuestaFotoPerfil.rows[0];
+  }catch(err){
+    console.log("Error consulta: "+err.message);
+    fotoPerfil=null;
+  }
+  
+  var fondo ='inicio/IMAGEN INICIO FONDO.png'
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
+
+  // Si la recarga es exitosa
+  if(response.status== 'AUTHORIZED' && response.response_code==0){
+    var saldoTotal= response.amount + parseInt(saldo);
+    console.log(saldoTotal)
+
+    var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
+    const parametros18=[saldoTotal, email];
+    var respuestaNuevo;
+    try{
+      respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
+    } catch(err){
+        console.log("Error consulta: "+err.message);
+    }
+
+    res.redirect('/recarga')
+  }else{
+    res.redirect('/failed')
+
+
+  }
+   
+  })
+
+  // Despues de recargar si todo sale ok
+  app.get('/recarga', async (req,res) => { 
+
+     var rolAdmin=req.headers.cookie || false ;
 
      // obtener email
      var email = await jwt.obtenerEmail(rolAdmin);
@@ -918,7 +1040,148 @@ app.get('/ayuda', async (req,res) => {
       if(saldo[i]=='.'){
         primerPunto=true;
       }
-      if(primerPunto==false){
+      if(primerPunto==false && saldo[i]!=undefined){
+        saldoFinal+=saldo[i];
+      }
+    }
+    saldo=saldoFinal
+   }
+ 
+   if(rolAdmin == false){
+     saldo=0;
+   }
+
+    // Consulta foto perfil
+  var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
+  const parametros15=[email];
+  var respuestaFotoPerfil;
+  try{
+    respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var fotoPerfil;
+  try{
+    fotoPerfil=respuestaFotoPerfil.rows[0];
+  }catch(err){
+    console.log("Error consulta: "+err.message);
+    fotoPerfil=null;
+}
+
+  var fondo ='inicio/IMAGEN INICIO FONDO.png'
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
+
+  res.render('recarga',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+
+  })
+
+  // Si la recarga no es valida
+    app.get('/failed', async (req,res) => { 
+
+      var rolAdmin=req.headers.cookie || false ;
+ 
+      // obtener email
+      var email = await jwt.obtenerEmail(rolAdmin);
+ 
+    // Consulta saldo
+    var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
+    const parametros6=[email];
+    var respuestaSaldo;
+    try{
+      respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
+    } catch(err){
+        console.log("Error consulta: "+err.message);
+        res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+        res.redirect("/login");
+    }
+    var saldo;
+  
+    if(respuestaSaldo.rows[0]==undefined){
+      saldo=0;
+    }else{
+      saldo = respuestaSaldo.rows[0].Saldo;
+          // Quitar decimales a saldo
+     var saldoFinal=''
+     var primerPunto=false;
+     for (i =0; i <= saldo.length ; i++) { 
+                                   
+       if(saldo[i]=='.'){
+         primerPunto=true;
+       }
+       if(primerPunto==false && saldo[i]!=undefined){
+         saldoFinal+=saldo[i];
+       }
+     }
+     saldo=saldoFinal
+    }
+  
+    if(rolAdmin == false){
+      saldo=0;
+    }
+ 
+     // Consulta foto perfil
+   var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
+   const parametros15=[email];
+   var respuestaFotoPerfil;
+   try{
+     respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
+   } catch(err){
+       console.log("Error consulta: "+err.message);
+   }
+   var fotoPerfil;
+   try{
+     fotoPerfil=respuestaFotoPerfil.rows[0];
+   }catch(err){
+     console.log("Error consulta: "+err.message);
+     fotoPerfil=null;
+ }
+ 
+   var fondo ='inicio/IMAGEN INICIO FONDO.png'
+   if(saldo=='0undefined'){
+     saldo=0;
+   }
+ 
+   res.render('failed',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+ 
+   })
+  
+
+// Ayuda
+app.get('/ayuda', async (req,res) => {
+  var rolAdmin=req.headers.cookie || false ;
+
+     // obtener email
+     var email = await jwt.obtenerEmail(rolAdmin);
+
+   // Consulta saldo
+   var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
+   const parametros6=[email];
+   var respuestaSaldo;
+   try{
+     respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
+   } catch(err){
+       console.log("Error consulta: "+err.message);
+       res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+       res.redirect("/login");
+   }
+   var saldo;
+ 
+   if(respuestaSaldo.rows[0]==undefined){
+     saldo=0;
+   }else{
+     saldo = respuestaSaldo.rows[0].Saldo;
+         // Quitar decimales a saldo
+    var saldoFinal=''
+    var primerPunto=false;
+    for (i =0; i <= saldo.length ; i++) { 
+      console.log(typeof(saldo[i]))
+                                  
+      if(saldo[i]=='.'){
+        primerPunto=true;
+      }
+      if(primerPunto==false && saldo[i]!=undefined){
         saldoFinal+=saldo[i];
       }
     }
