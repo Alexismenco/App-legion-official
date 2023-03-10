@@ -63,14 +63,18 @@
             </div>
 
             <div class="form-floating text-dark mt-5">
-              
-              <select class="form-control bg-dark text-info text-center mt-2 categoria" onclick="miFuncion()" id="categoria" name="categoria" required>
-                <option disabled selected>Categoria</option>
+              <h4 class="text-info"><b>Categoria</b></h4>
+              <p>
                 <% for(i=0;i<categorias.length;i++){ %> 
-
-                    <option name="categoria" class="text-center" value="<%= categorias[i]  %>"> <%= categorias[i] %>  </option>
+            
+                <input type="radio" id="categoria" name="categoria" value="<%= categorias[i]  %>" >  <span class="text-light"><%= categorias[i] %></span> <br>
+            
                 <% } %> 
-            </select>
+                  
+            
+              </p>
+              
+              
             
             </div>
             
@@ -282,7 +286,15 @@
                 
                 <script>
 
-                  function miFuncion() {
+                  var categoria = document.getElementsByName('categoria');
+
+                  for (var i = 0; i < categoria.length; i++) {
+                    categoria[i].addEventListener("click", handleClick);
+                  }
+
+                  function handleClick(event) {
+                    var valor = event.target.value;
+                    categoria.value=valor
 
                     var defecto = document.getElementById('defecto')
                     defecto.style.display = 'none'
