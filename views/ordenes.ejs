@@ -67,7 +67,6 @@
               <select class="form-control bg-dark text-info text-center mt-2 categoria" id="categoria" name="categoria" required>
                 <option disabled selected>Categoria</option>
                 <% for(i=0;i<categorias.length;i++){ %> 
-                  <%  %>
 
                     <option name="categoria" class="text-center" value="<%= categorias[i]  %>"> <%= categorias[i] %>  </option>
                 <% } %> 
@@ -80,154 +79,328 @@
               <span class="text-info" ><b>Servicios</b></span>
                 
               <%# Guardar servicios de cada categoria en un select diferente luego style.visibility hidden %>
-              <select class="form-control bg-dark text-info mt-2 text-center" id="servicio" name="servicio"  required>
+              <select class="form-control bg-dark text-info mt-2 text-center" id="facebook" name="servicio"  >
                 <option value="" disabled selected>Selecciona un servicio</option>
-                <% for(i=0;i<servicios.length;i++){ %> 
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="tiktok" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="instagram" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="youtube" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="spotify" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="twitter" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="digitales" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="verificacion" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="monetizacion" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <select class="form-control bg-dark text-info mt-2 text-center" id="defecto" name="servicio"  >
+                <option value="" disabled selected>Selecciona un servicio</option>
+              </select>
+
+              <% for(i=0;i<servicios.length;i++){ %> 
                   
                       <script>
+                       
+                        // select
+                        var facebooks = document.getElementById('facebook')
+                        var tiktoks = document.getElementById('tiktok')
+                        var instagrams = document.getElementById('instagram')
+                        var youtubes = document.getElementById('youtube')
+                        var spotifys = document.getElementById('spotify')
+                        var twitters = document.getElementById('twitter')
+                        var Digitaless = document.getElementById('digitales')
+                        var verificacions = document.getElementById('verificacion')
+                        var monetizacions = document.getElementById('monetizacion')
+
+
+
+
+                        // Facebook
+                        var option = document.createElement('option');
+                          option.value="<%= servicios[i].Categoria=='Facebook'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          option.text="<%= servicios[i].Categoria=='Facebook'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          facebooks.appendChild(option)
+
+                          for (var i = 0; i < facebooks.children.length; ++i) {
+                                var child = facebooks.children[i];
+                                if(child.text==''){
+                                  child.style.display = "none";
+                                }
+                          }
+
+                          // Tiktok
+                        var optiont = document.createElement('option');
+                          optiont.value="<%= servicios[i].Categoria=='Tiktok'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optiont.text="<%= servicios[i].Categoria=='Tiktok'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          tiktoks.appendChild(optiont)
+
+                          for (var i = 0; i < tiktoks.children.length; ++i) {
+                                var childt = tiktoks.children[i];
+                                if(childt.text==''){
+                                  childt.style.display = "none";
+                                }
+                          }
+
+                        // Instagram
+                        var optioni = document.createElement('option');
+
+                        optioni.value="<%= servicios[i].Categoria=='Instagram'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optioni.text="<%= servicios[i].Categoria=='Instagram'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          instagrams.appendChild(optioni)
+
+                          for (var i = 0; i < instagrams.children.length; ++i) {
+                                var childd = instagrams.children[i];
+                                if(childd.text==''){
+                                  childd.style.display = "none";
+                                }
+                          }
+                        
+                        // Youtube
+                        var optiony = document.createElement('option');
+
+                        optiony.value="<%= servicios[i].Categoria=='Youtube'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optiony.text="<%= servicios[i].Categoria=='Youtube'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          youtubes.appendChild(optiony)
+
+                          for (var i = 0; i < youtubes.children.length; ++i) {
+                                var childy = youtubes.children[i];
+                                if(childy.text==''){
+                                  childy.style.display = "none";
+                                }
+                          }
+
+                          // Spotify
+                          var options = document.createElement('option');
+
+                          options.value="<%= servicios[i].Categoria=='Spotify'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          options.text="<%= servicios[i].Categoria=='Spotify'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          spotifys.appendChild(options)
+
+                          for (var i = 0; i < spotifys.children.length; ++i) {
+                                var childs = spotifys.children[i];
+                                if(childs.text==''){
+                                  childs.style.display = "none";
+                                }
+                          }
+
+                          // Twitter
+                          var optiont = document.createElement('option');
+
+                          optiont.value="<%= servicios[i].Categoria=='Twitter'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optiont.text="<%= servicios[i].Categoria=='Twitter'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          twitters.appendChild(optiont)
+
+                          for (var i = 0; i < twitters.children.length; ++i) {
+                                var childt = twitters.children[i];
+                                if(childt.text==''){
+                                  childt.style.display = "none";
+                                }
+                          }
+
+                          // Digitales
+                          var optiond = document.createElement('option');
+
+                          optiond.value="<%= servicios[i].Categoria=='Digitales'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optiond.text="<%= servicios[i].Categoria=='Digitales'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          Digitaless.appendChild(optiond)
+
+                          for (var i = 0; i < Digitaless.children.length; ++i) {
+                                var childdi = Digitaless.children[i];
+                                if(childdi.text==''){
+                                  childdi.style.display = "none";
+                                }
+                          }
+
+                          // Verificacion
+                          var optionv = document.createElement('option');
+
+                          optionv.value="<%= servicios[i].Categoria=='Verificación'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optionv.text="<%= servicios[i].Categoria=='Verificación'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          verificacions.appendChild(optionv)
+
+                          for (var i = 0; i < verificacions.children.length; ++i) {
+                                var childv = verificacions.children[i];
+                                if(childv.text==''){
+                                  childv.style.display = "none";
+                                }
+                          }
+                          // Monetizacion
+                          var optionm = document.createElement('option');
+
+                          optionm.value="<%= servicios[i].Categoria=='Monetización'?servicios[i].id+' '+servicios[i].Precio:'' %>"
+                          optionm.text="<%= servicios[i].Categoria=='Monetización'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
+                          monetizacions.appendChild(optionm)
+
+                          for (var i = 0; i < monetizacions.children.length; ++i) {
+                                var childm = monetizacions.children[i];
+                                if(childm.text==''){
+                                  childm.style.display = "none";
+                                }
+                          }
+
+                          
 
                         var precioServicio;
                         var categoria = document.getElementById('categoria')
                         var servicio = document.getElementById('servicio')
 
-                        for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                child.style.display = "none";
-                            }
+                        facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
 
-
-                        categoria.addEventListener("click", function() {
-
-                          var optionti = document.createElement('option');
-                          optionti.value="<%= servicios[i].Categoria=='Tiktok'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optionti.text="<%= servicios[i].Categoria=='Tiktok'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-
-                          var optioni = document.createElement('option');
-                          optioni.value="<%= servicios[i].Categoria=='Instagram'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optioni.text="<%= servicios[i].Categoria=='Instagram'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          var optionf = document.createElement('option');
-                          optionf.value="<%= servicios[i].Categoria=='Facebook'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optionf.text="<%= servicios[i].Categoria=='Facebook'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          var options = document.createElement('option');
-                          options.value="<%= servicios[i].Categoria=='Spotify'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          options.text="<%= servicios[i].Categoria=='Spotify'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          var optiony = document.createElement('option');
-                          optiony.value="<%= servicios[i].Categoria=='Youtube'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optiony.text="<%= servicios[i].Categoria=='Youtube'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          var optiontw = document.createElement('option');
-                          optiontw.value="<%= servicios[i].Categoria=='Twitter'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optiontw.text="<%= servicios[i].Categoria=='Twitter'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          var optioncd = document.createElement('option');
-                          optioncd.value="<%= servicios[i].Categoria=='Digitales'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optioncd.text="<%= servicios[i].Categoria=='Digitales'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          var optionm = document.createElement('option');
-                          optionm.value="<%= servicios[i].Categoria=='Monetización'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optionm.text="<%= servicios[i].Categoria=='Monetización'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          var optionv = document.createElement('option');
-                          optionv.value="<%= servicios[i].Categoria=='Verificación'?servicios[i].id+' '+servicios[i].Precio:'' %>"
-                          optionv.text="<%= servicios[i].Categoria=='Verificación'?servicios[i].Nombre +' '+servicios[i].Descripcion+' '+servicios[i].Precio:'' %>"
-
-                          if('Tiktok'==categoria.value && optionti.value!='' && optionti.text!=''){
-                            // Hacer que se borren los nodos del select
-                            servicio.appendChild(optionti)
-
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Instagram'==categoria.value && optioni.value!=''){
-                            servicio.appendChild(optioni)
-
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Spotify'==categoria.value && options.value!='' ){
-                            servicio.appendChild(options)
-
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Youtube'==categoria.value && optiony.value!='' ){
-                            servicio.appendChild(optiony)
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Twitter'==categoria.value && optiontw.value!='' ){
-                            servicio.appendChild(optiontw)
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Facebook'==categoria.value && optionf.value!='' ){
-                            servicio.appendChild(optionf)
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Cuentas digitales'==categoria.value && optioncd.value!='' ){
-                            servicio.appendChild(optioncd)
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Monetización'==categoria.value && optionm.value!=''){
-                            servicio.appendChild(optionm)
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-
-                          }else if('Verificación'==categoria.value && optionv.value!=''){
-                            servicio.appendChild(optionv)
-                            for (var i = 0; i < servicio.children.length; ++i) {
-                                var child = servicio.children[i];
-                                if(!child.text.includes(categoria.value)){
-                                  child.style.display = "none";
-                                }
-                            }
-                          }
-                        
-
-                        })
 
                       </script>
                 <% } %> 
+                
+                <script>
 
-            </select>
+                  categoria.addEventListener("click", function() {
+
+                  var defecto = document.getElementById('defecto')
+                  defecto.style.display = 'none'
+
+
+                    if(categoria.value=='Facebook'){
+                      facebooks.style.display = 'flex'
+
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
+
+                    }else if(categoria.value=='Tiktok'){
+                        tiktoks.style.display= 'flex'
+
+                        facebooks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
+                      
+
+                    }else if(categoria.value=='Instagram'){
+                      instagrams.style.display= 'flex'
+
+                      facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
+
+                    }else if(categoria.value=='Youtube'){
+                      youtubes.style.display= 'flex'
+
+                      facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
+
+                    }else if(categoria.value=='Spotify'){
+                      spotifys.style.display= 'flex'
+
+                      facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
+
+                    }else if(categoria.value=='Twitter'){
+                      twitters.style.display= 'flex'
+
+                      facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
+
+                    }else if(categoria.value=='Cuentas digitales'){
+                      Digitaless.style.display= 'flex'
+
+                      facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        verificacions.style.display = 'none';
+                        monetizacions.style.display = 'none';
+
+                    }else if(categoria.value=='Verificación'){
+                      verificacions.style.display= 'flex'
+
+                      facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        monetizacions.style.display = 'none';
+
+                    }else if(categoria.value=='Monetización'){
+                      monetizacions.style.display= 'flex'
+
+                      facebooks.style.display = 'none';
+                        tiktoks.style.display = 'none';
+                        instagrams.style.display = 'none';
+                        youtubes.style.display = 'none';
+                        spotifys.style.display = 'none';
+                        twitters.style.display = 'none';
+                        Digitaless.style.display = 'none';
+                        verificacions.style.display = 'none';
+                    }
+
+                                            
+                  })
+                </script>
 
             <!--  -->
             <select class="form-control bg-dark text-info mt-2 text-center" id="servicio" name="servicio" style="display: none;" required>
@@ -268,6 +441,8 @@
                           var precio = "";
                           var primerEspacio=false;
 
+                          console.log(servicio)
+
                                 for (i =0; i <= (servicio.value.length -1); i++) { 
                                   
                                   if(servicio.value[i]==' '){
@@ -280,7 +455,6 @@
                                 preciofinal.text =precio*cantidad.value
                                 preciofinal.value =precio*cantidad.value
 
-                                console.log(preciofinal)
                         })
                   </script>
               </b></p>
