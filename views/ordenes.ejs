@@ -56,7 +56,7 @@
     <div class="text-center m-auto">
     
         <form class="container formulario col-3 m-auto" action="/ordenes" method="post"  enctype="multipart/form-data">
-            <h1 class="h3 mb-3 fw-normal text-info"><b>Nueva orden</b></h1>
+            <h1 class="h3 mb-3 fw-normal text-info"><b>Nuevo pedido</b></h1>
 
             <div class="m-2 bg-warning text-center rounded-top rounded-bottom">
               <li class="text-success p-2" style="list-style:none;"><b>Mi saldo $ <%= saldo %> CLP</b></li>
@@ -283,6 +283,7 @@
                 <script>
 
                   categoria.addEventListener("click", function() {
+                    categoria.click()
 
                   var defecto = document.getElementById('defecto')
                   defecto.style.display = 'none'
@@ -437,6 +438,17 @@
 
 
                     calcular.addEventListener("click", function() {
+
+                      // select
+                      var facebooks = document.getElementById('facebook')
+                        var tiktoks = document.getElementById('tiktok')
+                        var instagrams = document.getElementById('instagram')
+                        var youtubes = document.getElementById('youtube')
+                        var spotifys = document.getElementById('spotify')
+                        var twitters = document.getElementById('twitter')
+                        var Digitaless = document.getElementById('digitales')
+                        var verificacions = document.getElementById('verificacion')
+                        var monetizacions = document.getElementById('monetizacion')
 
                           var precio = "";
                           var primerEspacio=false;
