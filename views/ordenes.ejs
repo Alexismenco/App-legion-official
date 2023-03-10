@@ -292,6 +292,7 @@
                     categoria[i].addEventListener("click", handleClick);
                   }
 
+
                   function handleClick(event) {
                     var valor = event.target.value;
                     categoria.value=valor
@@ -411,12 +412,7 @@
                   }
 
                 </script>
-
-            <!--  -->
-            <select class="form-control bg-dark text-info mt-2 text-center" id="servicio" name="servicio" style="display: none;" required>
-            </select>
-
-
+                
               </div>
             <div class="form-floating text-dark mt-5">
               <span class="text-info"><b>Link</b></span>
@@ -448,33 +444,36 @@
 
                     calcular.addEventListener("click", function() {
 
-                      // select
-                      var facebooks = document.getElementById('facebook')
-                        var tiktoks = document.getElementById('tiktok')
-                        var instagrams = document.getElementById('instagram')
-                        var youtubes = document.getElementById('youtube')
-                        var spotifys = document.getElementById('spotify')
-                        var twitters = document.getElementById('twitter')
-                        var Digitaless = document.getElementById('digitales')
-                        var verificacions = document.getElementById('verificacion')
-                        var monetizacions = document.getElementById('monetizacion')
+                      var contenedorservicios = document.getElementById('contenedorservicios');
 
-                          var precio = "";
-                          var primerEspacio=false;
+                      
+                        for (var i = 0; i < contenedorservicios.children.length; i++) {
+                                var child = contenedorservicios.children[i];
+                                if(child.style.display=='flex'){
+                                  console.log(child.value)
 
-                          console.log(servicio)
+                                  var precio = "";
+                                  var primerEspacio=false;
 
-                                for (i =0; i <= (servicio.value.length -1); i++) { 
+
+                                for (i =0; i <= (child.value.length -1); i++) { 
                                   
-                                  if(servicio.value[i]==' '){
+                                  if(child.value[i]==' '){
                                     primerEspacio=true;
                                   }
                                   if(primerEspacio==true){
-                                    precio+=servicio.value[i]
+                                    precio+=child.value[i]
                                   }
                                 }
                                 preciofinal.text =precio*cantidad.value
                                 preciofinal.value =precio*cantidad.value
+
+                                  
+
+
+                                  
+                                }
+                          }
 
                         })
                   </script>
