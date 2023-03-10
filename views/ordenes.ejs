@@ -64,7 +64,7 @@
 
             <div class="form-floating text-dark mt-5">
               
-              <select class="form-control bg-dark text-info text-center mt-2 categoria" id="categoria" name="categoria" required>
+              <select class="form-control bg-dark text-info text-center mt-2 categoria" onclick="miFuncion()" id="categoria" name="categoria" required>
                 <option disabled selected>Categoria</option>
                 <% for(i=0;i<categorias.length;i++){ %> 
 
@@ -282,12 +282,11 @@
                 
                 <script>
 
-                  categoria.addEventListener("click", function() {
-
-                  var defecto = document.getElementById('defecto')
-                  defecto.style.display = 'none'
-
                   function miFuncion() {
+
+                    var defecto = document.getElementById('defecto')
+                    defecto.style.display = 'none'
+                    
                     if(categoria.value=='Facebook'){
                       facebooks.style.display = 'flex'
 
@@ -398,16 +397,6 @@
                         verificacions.style.display = 'none';
                     }
                   }
-
-                  // Llamar a setTimeout() para programar la ejecución de la función después de un segundo
-                  setTimeout(miFuncion(), 1000);
-
-
-                    
-
-                                            
-                  })
-                  categoria.click()
 
                 </script>
 
