@@ -18,15 +18,15 @@
             <% for(i=0;i<pedidos.length;i++){ %> 
 
                 <div class="col-sm-6 mb-3 p-2">
-                    <div class="card bg-primary">
+                    <div class="card bg-dark">
                       <div class="card-body">
-                        <h5 class="card-title"><b>Orden</b></h5>
+                        <h5 class="card-title"><b class="text-white">Orden</b></h5>
                         <p class="card-text text-white"><b>Id: <%= pedidos[i].id %></b></p>
                         <p class="card-text text-white"><b>Servicio: <%= pedidos[i].idservicio %></b></p>
 
                         <p class="card-text text-white"><b>Cantidad: <%= pedidos[i].cantidad %></b></p>
                         <p class="card-text text-white"><b>Precio: <%= pedidos[i].precio %></b></p>
-                        <p class="card-text text-warning"><b>Estado: <%= pedidos[i].estado %></b></p>
+                        <p class="card-text <%= pedidos[i].estado=='Procesando'?'text-warning':'text-success' %>"><b>Estado: <%= pedidos[i].estado %></b></p>
                       </div>
                     </div>
                   </div>

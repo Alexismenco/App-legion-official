@@ -1,0 +1,45 @@
+<%- include ("./partials/cabecera") %> 
+<%- rolAdmin!=false?include("./partials/navbar"):include("./partials/navbarUser")%> 
+
+<h1 class="text-info text-center mb-5"><b>Administración</b></h1>
+
+
+
+<div class=" text-center mt-5 mb-5">
+    <br>
+
+</div>
+
+<div class=" w-75 container text-center">
+    <div class="row row-cols-auto">
+
+        <% for(i=0;i<pedidos.length;i++){ %> 
+
+            <div class="col-sm-6 mb-3 p-2">
+                <form  class="container " action="/administracion" method="post">
+
+                    <div class="card bg-dark">
+
+                        <div class="card-body">
+                            <p class="text-white">Nombre: <%= pedidos[i].nombre %> </p>
+                            <p class="text-white">id: <%= pedidos[i].idservicio %> </p>
+                            <p class="text-white">Link: <%= pedidos[i].link %> </p>
+                            <p class="text-white">Cantidad: <%= pedidos[i].cantidad %> </p>
+                            <p class="text-white">Precio: <%= pedidos[i].precio %> </p>
+                            <p class=" <%= pedidos[i].estado=='Procesando'?'text-warning':'text-success' %>">Estado: <%= pedidos[i].estado %> </p>
+                        </div>
+                            <input name="id" type="text" value="<%= pedidos[i].id %>" hidden>
+                            <input  class="btn btn-success" type="submit" value="Completado" <%= pedidos[i].estado=='Completado'?'hidden':'' %>>
+                    </div>
+                        </form>
+
+            </div>
+        <% } %> 
+
+        
+    </div>
+</div>
+
+
+<%- include ("./partials/footer") %> 
+<%- include ("./partials/pie") %> 

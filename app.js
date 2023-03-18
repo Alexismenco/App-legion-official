@@ -16,6 +16,9 @@ const { resolve4 } = require('dns');
 const WebpayPlus = require("transbank-sdk").WebpayPlus; // CommonJS
 const { Options, IntegrationApiKeys, Environment, IntegrationCommerceCodes } = require("transbank-sdk"); // CommonJS
 
+// administrador
+var permisos=2;
+
 
 // configuracion nodmeailer
 var transporter=nodemailer.createTransport({
@@ -37,6 +40,17 @@ app.get('/', async (req,res) => {
 
     // obtener email
   var email = await jwt.obtenerEmail(rolAdmin);
+
+  // Consulta administrador
+  var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+  const parametrosAdmin=[email];
+  var respuestaAdministrador;
+  try{
+    respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+      
+  }
 
   // Consulta saldo
   var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
@@ -75,6 +89,15 @@ app.get('/', async (req,res) => {
     saldo=0;
   }
 
+    try{
+    if(respuestaAdministrador.rows[0].Tipo===1){
+      permisos=1;
+     }
+   }catch(err){
+    console.log("Error consulta: "+err.message);
+  }
+
+
   // Consulta foto perfil
   var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
   const parametros15=[email];
@@ -97,7 +120,7 @@ app.get('/', async (req,res) => {
     saldo=0;
   }
 
-    res.render('index',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+    res.render('index',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos})
 })
 
 // Contacto
@@ -456,7 +479,27 @@ app.get('/ordenes',permisosAdmin, async (req,res) => {
   }
 
   var fondo= 'ordenes/fondo.jpg'
-  res.render('ordenes',{rolAdmin:rolAdmin, saldo:saldo, servicios:servicios, categorias:categorias, fotoPerfil:fotoPerfil, fondo:fondo})
+
+    // Consulta administrador
+  var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+  const parametrosAdmin=[email];
+  var respuestaAdministrador;
+  try{
+    respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+      
+  }
+
+  try{
+    if(respuestaAdministrador.rows[0].Tipo===1){
+      permisos=1;
+     }
+   }catch(err){
+    console.log("Error consulta: "+err.message);
+  }
+
+  res.render('ordenes',{rolAdmin:rolAdmin, saldo:saldo, servicios:servicios, categorias:categorias, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos})
 })
 
 // Procesar pedido
@@ -467,6 +510,27 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
 
   // obtener email
   var email = await jwt.obtenerEmail(rolAdmin);
+
+  // Consulta administrador
+  var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+  const parametrosAdmin=[email];
+  var respuestaAdministrador;
+  try{
+    respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+      
+  }
+
+  try{
+    if(respuestaAdministrador.rows[0].Tipo===1){
+      permisos=1;
+     }
+   }catch(err){
+    console.log("Error consulta: "+err.message);
+    res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+    res.redirect('/');
+  }
 
   // Consulta saldo
   var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
@@ -544,8 +608,16 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
     } catch(err){
         console.log("Error Descontar saldo: "+err.message);
     }
-    var idMaximo=resultadoId.rows[0].id;
-    idMaximo= parseInt(idMaximo) || 0;
+
+    var idMaximo;
+    try{
+      idMaximo=resultadoId.rows[0].id;
+      
+    } catch(err){
+        idMaximo='0'
+    }
+   
+    idMaximo= parseInt(idMaximo);
     idMaximo=(idMaximo+1);
 
     // Agregar pedido
@@ -612,7 +684,7 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
         }
         saldo=saldoFinal
 
-        res.render('successful',{rolAdmin:rolAdmin, saldo:saldo, orden:orden, servicioEscogido:servicioEscogido, fotoPerfil:fotoPerfil, fondo:fondo})
+        res.render('successful',{rolAdmin:rolAdmin, saldo:saldo, orden:orden, servicioEscogido:servicioEscogido, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos})
       }
       
     } catch(err){
@@ -623,7 +695,7 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
     if(saldo=='0undefined'){
       saldo=0;
     }
-    res.render('declined',{rolAdmin:rolAdmin, saldo:saldo, fondo:fondo})
+    res.render('declined',{rolAdmin:rolAdmin, saldo:saldo, fondo:fondo, permisos:permisos})
 
   }
 
@@ -635,6 +707,7 @@ app.get('/mispedidos', async (req,res) => {
    // obtener email
    var email = await jwt.obtenerEmail(rolAdmin);
 
+ 
   // Consulta saldo
   var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
   const parametros6=[email];
@@ -670,6 +743,26 @@ app.get('/mispedidos', async (req,res) => {
   if(rolAdmin == false){
     saldo=0;
   }
+
+    // Consulta administrador
+   var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+   const parametrosAdmin=[email];
+   var respuestaAdministrador;
+   try{
+     respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+   } catch(err){
+       console.log("Error consulta: "+err.message);
+       
+   }
+
+   try{
+    if(respuestaAdministrador.rows[0].Tipo===1){
+      permisos=1;
+     }
+   }catch(err){
+    console.log("Error consulta: "+err.message);
+  }
+
   // Consultar pedidos
   var consultaPedidos='SELECT * from "Pedidos"  WHERE "emailuser"=$1'
   const parametros17=[email];
@@ -733,7 +826,7 @@ app.get('/mispedidos', async (req,res) => {
     saldo=0;
   }
 
-  res.render('pedidos',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, pedidos:pedidos})
+  res.render('pedidos',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, pedidos:pedidos, permisos:permisos})
 })
 
 // Actualizar foto perfil
@@ -809,6 +902,25 @@ if(rolAdmin == false){
   saldo=0;
 }
 
+// Consulta administrador
+var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+const parametrosAdmin=[email];
+var respuestaAdministrador;
+try{
+  respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+} catch(err){
+    console.log("Error consulta: "+err.message);
+    
+}
+
+try{
+  if(respuestaAdministrador.rows[0].Tipo===1){
+    permisos=1;
+   }
+ }catch(err){
+  console.log("Error consulta: "+err.message);
+}
+
 // Consulta foto perfil
 var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
 const parametros15=[email];
@@ -830,7 +942,7 @@ var fondo ='inicio/IMAGEN INICIO FONDO.png'
 if(saldo=='0undefined'){
   saldo=0;
 }
-  res.render('buy',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+  res.render('buy',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos})
 
 })
 
@@ -878,6 +990,25 @@ if(rolAdmin == false){
   saldo=0;
 }
 
+// Consulta administrador
+var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+const parametrosAdmin=[email];
+var respuestaAdministrador;
+try{
+  respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+} catch(err){
+    console.log("Error consulta: "+err.message);
+    
+}
+
+try{
+  if(respuestaAdministrador.rows[0].Tipo===1){
+    permisos=1;
+   }
+ }catch(err){
+  console.log("Error consulta: "+err.message);
+}
+
 // Consulta foto perfil
 var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
 const parametros15=[email];
@@ -911,7 +1042,7 @@ const response = await tx.create('j0ek0e9rokfoe', '123', monto, 'http://app-legi
 const token = response.token;
 const urlt = response.url;
 
-  res.render('pagar',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, token:token, urlt:urlt, monto:monto})
+  res.render('pagar',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, token:token, urlt:urlt, monto:monto, permisos:permisos})
 })
 
 // Regreso de la orden en transbank 
@@ -1050,6 +1181,25 @@ const urlt = response.url;
      saldo=0;
    }
 
+        // Consulta administrador
+     var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+     const parametrosAdmin=[email];
+     var respuestaAdministrador;
+     try{
+       respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+     } catch(err){
+         console.log("Error consulta: "+err.message);
+         
+     }
+
+     try{
+      if(respuestaAdministrador.rows[0].Tipo===1){
+        permisos=1;
+       }
+     }catch(err){
+      console.log("Error consulta: "+err.message);
+    }
+
     // Consulta foto perfil
   var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
   const parametros15=[email];
@@ -1072,7 +1222,7 @@ const urlt = response.url;
     saldo=0;
   }
 
-  res.render('recarga',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+  res.render('recarga',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos})
 
   })
 
@@ -1120,6 +1270,25 @@ const urlt = response.url;
       saldo=0;
     }
  
+       // Consulta administrador
+      var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+      const parametrosAdmin=[email];
+      var respuestaAdministrador;
+      try{
+        respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+      } catch(err){
+          console.log("Error consulta: "+err.message);
+          
+      }
+
+      try{
+        if(respuestaAdministrador.rows[0].Tipo===1){
+          permisos=1;
+         }
+       }catch(err){
+        console.log("Error consulta: "+err.message);
+      }
+
      // Consulta foto perfil
    var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
    const parametros15=[email];
@@ -1142,9 +1311,156 @@ const urlt = response.url;
      saldo=0;
    }
  
-   res.render('failed',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+   res.render('failed',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos})
  
    })
+
+
+// Administrador
+app.get('/administracion', async (req,res) => {
+  var rolAdmin=req.headers.cookie || false ;
+
+     // obtener email
+     var email = await jwt.obtenerEmail(rolAdmin);
+
+
+      // Consultar pedidos
+  var consultaPedidos='SELECT * from "Pedidos" '
+  var respuestaPedidos;
+  try{
+    respuestaPedidos = await conexion.query(consultaPedidos);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var resPedidos;
+
+  if(respuestaPedidos.rows==undefined){
+    resPedidos=false;
+  }else{
+    resPedidos=respuestaPedidos.rows
+  }
+
+  // Agregar servicio al pedido
+  var consultaServicios2 = 'SELECT * FROM "Servicios";'
+  var respuestaServicios2;
+  try{
+    respuestaServicios2 = await conexion.query(consultaServicios2);
+
+  }catch(err){
+    console.log("Error consulta: "+err.message);
+  }
+
+  var pedidos =resPedidos.map(p => {
+    Object.keys(respuestaServicios2.rows).forEach(element => {
+      if(respuestaServicios2.rows[element].id==p.idservicio){
+
+       p.nombre= respuestaServicios2.rows[element].Nombre+ ' ' +respuestaServicios2.rows[element].Descripcion
+       return p
+      }
+      
+    });
+    return p
+});
+
+      
+       
+   // Consulta saldo
+   var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
+   const parametros6=[email];
+   var respuestaSaldo;
+   try{
+     respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
+   } catch(err){
+       console.log("Error consulta: "+err.message);
+       res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+       res.redirect("/login");
+   }
+   var saldo;
+ 
+   if(respuestaSaldo.rows[0]==undefined){
+     saldo=0;
+   }else{
+     saldo = respuestaSaldo.rows[0].Saldo;
+         // Quitar decimales a saldo
+    var saldoFinal=''
+    var primerPunto=false;
+    for (i =0; i <= saldo.length ; i++) { 
+                                  
+      if(saldo[i]=='.'){
+        primerPunto=true;
+      }
+      if(primerPunto==false && saldo[i]!=undefined){
+        saldoFinal+=saldo[i];
+      }
+    }
+    saldo=saldoFinal
+   }
+ 
+   if(rolAdmin == false){
+     saldo=0;
+   }
+
+      // Consulta administrador
+       var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+       const parametrosAdmin=[email];
+       var respuestaAdministrador;
+       try{
+         respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+       } catch(err){
+           console.log("Error consulta: "+err.message);
+           
+       }
+
+       try{
+        if(respuestaAdministrador.rows[0].Tipo===1){
+          permisos=1;
+         }else{
+          res.redirect('/');
+         }
+       }catch(err){
+        console.log("Error consulta: "+err.message);
+      }
+
+    // Consulta foto perfil
+  var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
+  const parametros15=[email];
+  var respuestaFotoPerfil;
+  try{
+    respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var fotoPerfil;
+  try{
+    fotoPerfil=respuestaFotoPerfil.rows[0];
+  }catch(err){
+    console.log("Error consulta: "+err.message);
+    fotoPerfil=null;
+}
+
+  var fondo ='inicio/IMAGEN INICIO FONDO.png'
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
+   console.log(permisos)
+  res.render('administracion',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos, pedidos:pedidos})
+})
+
+// Procesar orden de Procesando a completado
+app.post('/administracion', async (req,res) => {
+
+  // Actualizar estado 
+  var actualizarEstado='UPDATE "Pedidos" SET estado='+"'Completado'" +' WHERE "id"=$1;'
+  const parametros20=[req.body.id];
+  var respuestaActualizacion;
+  try{
+    respuestaActualizacion = await conexion.query(actualizarEstado,parametros20);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+
+  res.redirect('/administracion')
+})
   
 
 // Ayuda
@@ -1190,6 +1506,25 @@ app.get('/ayuda', async (req,res) => {
      saldo=0;
    }
 
+        // Consulta administrador
+     var consultaAdministrador='SELECT "Tipo" from "Usuarios" WHERE "Email"=$1'
+     const parametrosAdmin=[email];
+     var respuestaAdministrador;
+     try{
+       respuestaAdministrador = await conexion.query(consultaAdministrador,parametrosAdmin);
+     } catch(err){
+         console.log("Error consulta: "+err.message);
+         
+     }
+
+     try{
+      if(respuestaAdministrador.rows[0].Tipo===1){
+        permisos=1;
+       }
+     }catch(err){
+      console.log("Error consulta: "+err.message);
+    }
+
     // Consulta foto perfil
   var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
   const parametros15=[email];
@@ -1212,7 +1547,7 @@ app.get('/ayuda', async (req,res) => {
     saldo=0;
   }
 
-  res.render('ayuda',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo})
+  res.render('ayuda',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos})
 })
 
 
