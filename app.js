@@ -62,6 +62,7 @@ app.get('/', async (req,res) => {
       console.log("Error consulta: "+err.message);
   }
   var saldo;
+try{
 
   if(respuestaSaldo.rows[0]==undefined){
     saldo=0;
@@ -84,6 +85,9 @@ app.get('/', async (req,res) => {
     }
     saldo=saldoFinal
   }
+}catch(err){
+  console.log("Error consulta: "+err.message);
+}
 
   if(rolAdmin == false){
     saldo=0;
