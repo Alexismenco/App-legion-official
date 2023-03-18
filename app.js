@@ -1446,7 +1446,7 @@ app.get('/administracion', async (req,res) => {
   if(saldo=='0undefined'){
     saldo=0;
   }
-   console.log(permisos)
+   console.log(pedidos)
   res.render('administracion',{rolAdmin:rolAdmin, saldo:saldo, fotoPerfil:fotoPerfil, fondo:fondo, permisos:permisos, pedidos:pedidos})
 })
 
