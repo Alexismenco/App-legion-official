@@ -27,6 +27,8 @@
                             <p class="text-white">Cantidad: <%= pedidos[i].cantidad %> </p>
                             <p class="text-white">Precio: <%= pedidos[i].precio %> </p>
                             <p class="text-white">Email: <%= pedidos[i].emailuser %> </p>
+                            <p class="text-white">Precio: <%= pedidos[i].fecha %> </p>
+
                             <p class=" <%= pedidos[i].estado=='Procesando'?'text-warning':'text-success' %>">Estado: <%= pedidos[i].estado %> </p>
                         </div>
                             <input name="id" type="text" value="<%= pedidos[i].id %>" hidden>
