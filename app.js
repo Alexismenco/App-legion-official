@@ -651,6 +651,59 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
             console.log("Error Consultar Servicio: "+err.message);
         }
 
+        // Consulta datos pedido actual 
+        var consultaPedidoActual='SELECT * FROM "Pedidos" WHERE "id"=$1;'
+        const parametrosActual=[idMaximo];
+        var respuestaPedidoActual;
+        try{
+          respuestaPedidoActual = await conexion.query(consultaPedidoActual,parametrosActual);
+        } catch(err){
+            console.log("Error Consultar Servicio: "+err.message);
+        }
+
+
+          // Agregar nombre al pedido
+        var consultaServicios3 = 'SELECT * FROM "Servicios";'
+        var respuestaServicios3;
+        try{
+          respuestaServicios3 = await conexion.query(consultaServicios3);
+
+        }catch(err){
+          console.log("Error consulta: "+err.message);
+        }
+
+        var pedidos =respuestaServicios3.rows.map(p => {
+          if(p.id==respuestaPedidoActual.rows[0].idservicio){
+    
+            respuestaPedidoActual.rows[0].idservicio= p.Nombre+ ' ' +p.Descripcion
+          }
+        return p
+      });
+
+        // Envio de correo de nueva orden
+        let mensaje = "Nueva orden\n";
+        mensaje+="id : "+idMaximo+"\n";
+        mensaje+="Servicio : "+respuestaPedidoActual.rows[0].idservicio+"\n";
+        mensaje+="Link : "+req.body.link+"\n";
+        mensaje+="Cantidad : "+req.body.cantidad+"\n";
+        mensaje+="Precio : "+precioTotal+"\n";
+        mensaje+="Email : "+email+"\n";
+        let mail={
+          from: 'alexismer793@gmail.com',
+          to: 'dccompanydiamond@gmail.com',
+          subject:'Nuevo pedido AppTC',
+          text:mensaje
+        }
+        transporter.sendMail(mail,function(err,info){
+          if(err){
+            console.log("Error en correo: "+err.message);
+            res.status(500).send("Error al enviar correo");
+          }else{
+            console.log("Correo enviado: "+ info.response);
+            res.redirect("/contacto");
+          }
+        })
+
         // Buscar foto de perfil
         var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
         const parametros16=[email];
