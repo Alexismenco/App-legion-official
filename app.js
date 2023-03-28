@@ -1382,7 +1382,7 @@ app.get('/administracion', async (req,res) => {
 
 
       // Consultar pedidos
-  var consultaPedidos='SELECT * from "Pedidos" '
+  var consultaPedidos='SELECT * from "Pedidos" ORDER BY "id";'
   var respuestaPedidos;
   try{
     respuestaPedidos = await conexion.query(consultaPedidos);
