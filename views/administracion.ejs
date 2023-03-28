@@ -21,13 +21,13 @@
                     <div class="card bg-dark">
 
                         <div class="card-body">
+                            <p class="text-white">id Pedido : <%= pedidos[i].id %> </p>
                             <p class="text-white">Nombre: <%= pedidos[i].nombre %> </p>
                             <p class="text-white">id: <%= pedidos[i].idservicio %> </p>
                             <p class="text-white">Link: <%= pedidos[i].link %> </p>
                             <p class="text-white">Cantidad: <%= pedidos[i].cantidad %> </p>
                             <p class="text-white">Precio: <%= pedidos[i].precio %> </p>
                             <p class="text-white">Email: <%= pedidos[i].emailuser %> </p>
-                            <p class="text-white">Precio: <%= pedidos[i].fecha %> </p>
 
                             <p class=" <%= pedidos[i].estado=='Procesando'?'text-warning':'text-success' %>">Estado: <%= pedidos[i].estado %> </p>
                         </div>
