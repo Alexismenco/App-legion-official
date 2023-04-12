@@ -1105,6 +1105,7 @@ const urlt = response.url;
 // Regreso de la orden en transbank 
   app.post("/pago",async function(req,res){
     const token = req.query.token_ws
+    console.log(token)
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const response = await tx.commit(token);
 
@@ -1196,6 +1197,8 @@ const urlt = response.url;
 
   app.get("/pago",async function(req,res){
     const token = req.query.token_ws
+    console.log(token)
+
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const response = await tx.commit(token);
 
