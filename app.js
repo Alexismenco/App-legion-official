@@ -1196,11 +1196,15 @@ const urlt = response.url;
   })
 
   app.get("/pago",async function(req,res){
-    const token = req.query.token_ws
+    console.log(req)
+    const token = req.query.token_ws || 'none'
     console.log(token)
 
+  if(token && token!=='none'){
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const response = await tx.commit(token);
+  }
+    
 
     var rolAdmin=req.headers.cookie || false ;
 
@@ -1267,24 +1271,31 @@ const urlt = response.url;
   }
 
   // Si la recarga es exitosa
-  if(response.status== 'AUTHORIZED' && response.response_code==0){
-    var saldoTotal= response.amount + parseInt(saldo);
+  try{
 
-    var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
-    const parametros18=[saldoTotal, email];
-    var respuestaNuevo;
-    try{
-      respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
-    } catch(err){
-        console.log("Error consulta: "+err.message);
+    if(response.status== 'AUTHORIZED' && response.response_code==0){
+      var saldoTotal= response.amount + parseInt(saldo);
+
+      var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
+      const parametros18=[saldoTotal, email];
+      var respuestaNuevo;
+      try{
+        respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
+      } catch(err){
+          console.log("Error consulta: "+err.message);
+      }
+
+      res.redirect('/recarga')
+    }else{
+      res.redirect('/failed')
+
+
     }
-
-    res.redirect('/recarga')
-  }else{
+  } catch(err){
     res.redirect('/failed')
 
-
   }
+
    
   })
 
