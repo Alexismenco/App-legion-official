@@ -1103,6 +1103,97 @@ const urlt = response.url;
 })
 
 // Regreso de la orden en transbank 
+  app.post("/pago",async function(req,res){
+    const token = req.query.token_ws
+    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+    const response = await tx.commit(token);
+
+    var rolAdmin=req.headers.cookie || false ;
+
+    // obtener email
+  var email = await jwt.obtenerEmail(rolAdmin);
+  
+  // Consulta saldo
+  var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
+  const parametros6=[email];
+  var respuestaSaldo;
+  try{
+    respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var saldo;
+  
+  if(respuestaSaldo.rows[0]==undefined){
+    saldo=0;
+    res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+    res.redirect("/login");
+  }else{
+    saldo = respuestaSaldo.rows[0].Saldo;
+  
+    // Quitar decimales a saldo
+    var saldoFinal=''
+    var primerPunto=false;
+    for (i =0; i <= saldo.length ; i++) { 
+                                  
+      if(saldo[i]=='.'){
+        primerPunto=true;
+      }
+      if(primerPunto==false && saldo[i]!=undefined){
+        saldoFinal+=saldo[i];
+      }
+    }
+    saldo=saldoFinal
+  }
+  
+  if(rolAdmin == false){
+    saldo=0;
+  }
+  
+  // Consulta foto perfil
+  var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
+  const parametros15=[email];
+  var respuestaFotoPerfil;
+  try{
+    respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var fotoPerfil;
+  try{
+    fotoPerfil=respuestaFotoPerfil.rows[0];
+  }catch(err){
+    console.log("Error consulta: "+err.message);
+    fotoPerfil=null;
+  }
+  
+  var fondo ='inicio/IMAGEN INICIO FONDO.png'
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
+
+  // Si la recarga es exitosa
+  if(response.status== 'AUTHORIZED' && response.response_code==0){
+    var saldoTotal= response.amount + parseInt(saldo);
+
+    var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
+    const parametros18=[saldoTotal, email];
+    var respuestaNuevo;
+    try{
+      respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
+    } catch(err){
+        console.log("Error consulta: "+err.message);
+    }
+
+    res.redirect('/recarga')
+  }else{
+    res.redirect('/failed')
+
+
+  }
+   
+  })
+
   app.get("/pago",async function(req,res){
     const token = req.query.token_ws
     const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
