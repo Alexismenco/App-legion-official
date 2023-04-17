@@ -1196,7 +1196,6 @@ const urlt = response.url;
   })
 
   app.get("/pago",async function(req,res){
-    console.log(req)
     const token = req.query.token_ws || 'none'
     console.log(token)
 
