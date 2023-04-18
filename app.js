@@ -1095,7 +1095,7 @@ let monto = entero.toString() + decimal.toString().slice(1);
  // Conexion transbank
  IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
  IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
- 
+
 const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
 const response = await tx.create('j0ek0e9rokfoe', '123', monto, process.env.DIRECCIONRETORNO +'pago');
 
@@ -1109,13 +1109,13 @@ const urlt = response.url;
   app.post("/pago",async function(req,res){
     const token = req.query.token_ws
     console.log(token)
-    if(token && token!=='none'){
-      IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
-      IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
+
+    IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
+    IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
   
-      const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
-      const response = await tx.commit(token);
-    }
+    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
+    const response = await tx.commit(token);
+    
       
     var rolAdmin=req.headers.cookie || false ;
 
@@ -1204,16 +1204,16 @@ const urlt = response.url;
   })
 
   app.get("/pago",async function(req,res){
+
     const token = req.query.token_ws || 'none'
     console.log(token)
 
-  if(token && token!=='none'){
     IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
     IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
 
-    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
+    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
     const response = await tx.commit(token);
-  }
+  
     
 
     var rolAdmin=req.headers.cookie || false ;
@@ -1281,6 +1281,7 @@ const urlt = response.url;
   }
 
   // Si la recarga es exitosa
+  console.log(response)
   try{
 
     if(response.status== 'AUTHORIZED' && response.response_code==0){
