@@ -1094,7 +1094,7 @@ let monto = entero.toString() + decimal.toString().slice(1);
 
  // Conexion transbank
 const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
-const response = await tx.create('j0ek0e9rokfoe', '123', monto, process.env.DIRECCIONRETORNO+'pago');
+const response = await tx.create('j0ek0e9rokfoe', '123', monto, process.env.DIRECCIONRETORNO +'pago');
 
 const token = response.token;
 const urlt = response.url;
@@ -1106,9 +1106,14 @@ const urlt = response.url;
   app.post("/pago",async function(req,res){
     const token = req.query.token_ws
     console.log(token)
-    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
-    const response = await tx.commit(token);
-
+    if(token && token!=='none'){
+      IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
+      IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
+  
+      const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
+      const response = await tx.commit(token);
+    }
+      
     var rolAdmin=req.headers.cookie || false ;
 
     // obtener email
@@ -1200,7 +1205,10 @@ const urlt = response.url;
     console.log(token)
 
   if(token && token!=='none'){
-    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+    IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
+    IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
+
+    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
     const response = await tx.commit(token);
   }
     
