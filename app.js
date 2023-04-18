@@ -1093,7 +1093,10 @@ let decimal = 0.00;
 let monto = entero.toString() + decimal.toString().slice(1);
 
  // Conexion transbank
-const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+ IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
+ IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
+ 
+const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
 const response = await tx.create('j0ek0e9rokfoe', '123', monto, process.env.DIRECCIONRETORNO +'pago');
 
 const token = response.token;
