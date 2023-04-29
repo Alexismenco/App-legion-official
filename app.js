@@ -690,7 +690,7 @@ app.post('/ordenes',permisosAdmin, async (req,res) =>{
         mensaje+="Email : "+email+"\n";
         let mail={
           from: 'alexismer793@gmail.com',
-          to: 'dccompanydiamond@gmail.com',
+          to: 'zentenogutierrez07@gmail.com',
           subject:'Nuevo pedido AppTC',
           text:mensaje
         }
