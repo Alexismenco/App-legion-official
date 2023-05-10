@@ -1096,8 +1096,11 @@ let monto = entero.toString() + decimal.toString().slice(1);
  IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
  IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
 
+ let buyOrder = "O-" + Math.floor(Math.random() * 10000) + 1;
+ let sessionId = "S-" + Math.floor(Math.random() * 10000) + 1;
+
 const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
-const response = await tx.create('j0ek0e9rokfoe', '123', monto, process.env.DIRECCIONRETORNO +'pago');
+const response = await tx.create(buyOrder, sessionId, monto, process.env.DIRECCIONRETORNO +'pago');
 
 const token = response.token;
 const urlt = response.url;
@@ -1107,16 +1110,10 @@ const urlt = response.url;
 
 // Regreso de la orden en transbank 
   app.post("/pago",async function(req,res){
-    const token = req.query.token_ws
-    console.log(token)
+    let params = req.method === 'GET' ? req.query : req.body;
+    let token = params.token_ws;
+    let tbkToken = params.TBK_TOKEN;
 
-    IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
-    IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
-  
-    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
-    const response = await tx.commit(token);
-    
-    console.log(response)
     var rolAdmin=req.headers.cookie || false ;
 
     // obtener email
@@ -1182,39 +1179,36 @@ const urlt = response.url;
   }
 
   // Si la recarga es exitosa
-  if(response.status== 'AUTHORIZED' && response.response_code==0){
-    var saldoTotal= response.amount + parseInt(saldo);
+  try{
 
-    var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
-    const parametros18=[saldoTotal, email];
-    var respuestaNuevo;
-    try{
-      respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
+    if (token && !tbkToken) {//Flujo 1
+      const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
+
+      if(commitResponse.status=='AUTHORIZED'){
+        var saldoTotal= commitResponse.amount + parseInt(saldo);
+
+        var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
+        const parametros18=[saldoTotal, email];
+        var respuestaNuevo;
+        try{
+          respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
+        } catch(err){
+            console.log("Error consulta: "+err.message);
+        }
+        res.redirect('/recarga')
+      } 
+      }else{//Flujo 2
+        res.redirect('/failed')
+      }
     } catch(err){
-        console.log("Error consulta: "+err.message);
+      res.redirect('/failed')
     }
-
-    res.redirect('/recarga')
-  }else{
-    res.redirect('/failed')
-
-
-  }
-   
   })
 
   app.get("/pago",async function(req,res){
-
-    const token = req.query.token_ws || 'none'
-    console.log(token)
-
-    IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
-    IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
-
-    const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
-    const response = await tx.commit(token);
-  
-    
+    let params = req.method === 'GET' ? req.query : req.body;
+    let token = params.token_ws;
+    let tbkToken = params.TBK_TOKEN;
 
     var rolAdmin=req.headers.cookie || false ;
 
@@ -1281,34 +1275,31 @@ const urlt = response.url;
   }
 
   // Si la recarga es exitosa
-  console.log(response)
   try{
 
-    if(response.status== 'AUTHORIZED' && response.response_code==0){
-      var saldoTotal= response.amount + parseInt(saldo);
+    if (token && !tbkToken) {//Flujo 1
+      const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
 
-      var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
-      const parametros18=[saldoTotal, email];
-      var respuestaNuevo;
-      try{
-        respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
-      } catch(err){
-          console.log("Error consulta: "+err.message);
+      if(commitResponse.status=='AUTHORIZED'){
+        var saldoTotal= commitResponse.amount + parseInt(saldo);
+
+        var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
+        const parametros18=[saldoTotal, email];
+        var respuestaNuevo;
+        try{
+          respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
+        } catch(err){
+            console.log("Error consulta: "+err.message);
+        }
+        res.redirect('/recarga')
+      } 
+      }else{//Flujo 2
+        res.redirect('/failed')
       }
-
-      res.redirect('/recarga')
-    }else{
+    } catch(err){
       res.redirect('/failed')
-
-
     }
-  } catch(err){
-    res.redirect('/failed')
-
-  }
-
-   
-  })
+  });
 
   // Despues de recargar si todo sale ok
   app.get('/recarga', async (req,res) => { 
