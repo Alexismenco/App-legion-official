@@ -1122,9 +1122,7 @@ const urlt = response.url;
     console.log(tbkToken);
 
     if (token && !tbkToken) {//Flujo 1
-      const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
-      const commitResponse = await tx.commit(token);
-      console.log(commitResponse);
+
     }
 
     var rolAdmin=req.headers.cookie || false ;
@@ -1193,9 +1191,12 @@ const urlt = response.url;
 
   // Si la recarga es exitosa
     if (token && !tbkToken) {//Flujo 1
+      const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
+      const commitResponse = await tx.commit(token);
+      console.log(commitResponse);
       if(commitResponse.status=='AUTHORIZED'){
         var saldoTotal= commitResponse.amount + parseInt(saldo);
-        console.log(saldoTotal);
+        console.log('saldo Total:> ', saldoTotal);
 
         var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
         const parametros18=[saldoTotal, email];
