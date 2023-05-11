@@ -1181,12 +1181,11 @@ const urlt = response.url;
     saldo=0;
   }
 
-  // Si la recarga es exitosa
   try{
 
     if (token && !tbkToken) {//Flujo 1
       const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
-console.log(commitResponse, '--> commit response')
+      console.log(commitResponse, '--> commit response')
       if(commitResponse.status=='AUTHORIZED'){
         var saldoTotal= commitResponse.amount + parseInt(saldo);
         console.log(saldoTotal)
