@@ -1114,7 +1114,6 @@ const urlt = response.url;
 
   app.get("/pago",async function(req,res){
     let params = req.method === 'GET' ? req.query : req.body;
-    console.log(req.query);
     console.log('=============REQ===============');
     let token = req.query.token_ws;
     let tbkToken = params.TBK_TOKEN;
@@ -1123,9 +1122,7 @@ const urlt = response.url;
     console.log(tbkToken);
 
     if (token && !tbkToken) {//Flujo 1
-      IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
-      IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
-      const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+      const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
       const commitResponse = await tx.commit(token);
       console.log(commitResponse);
     }
