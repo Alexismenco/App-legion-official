@@ -1214,6 +1214,10 @@ const urlt = response.url;
     let params = req.method === 'GET' ? req.query : req.body;
     let token = params.token_ws;
     let tbkToken = params.TBK_TOKEN;
+    console.log(token);
+    console.log('============================');
+    console.log(tbkToken);
+
 
     var rolAdmin=req.headers.cookie || false ;
 
@@ -1284,9 +1288,10 @@ const urlt = response.url;
 
     if (token && !tbkToken) {//Flujo 1
       const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
-
+      console.log(commitResponse);
       if(commitResponse.status=='AUTHORIZED'){
         var saldoTotal= commitResponse.amount + parseInt(saldo);
+        console.log(saldoTotal);
 
         var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
         const parametros18=[saldoTotal, email];
@@ -1296,12 +1301,15 @@ const urlt = response.url;
         } catch(err){
             console.log("Error consulta: "+err.message);
         }
+        console.log('en recarga')
         res.redirect('/recarga')
       } 
       }else{//Flujo 2
+        console.log('else failed')
         res.redirect('/failed')
       }
     } catch(err){
+      console.log('else catch')
       res.redirect('/failed')
     }
   });
