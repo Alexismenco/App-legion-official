@@ -1123,7 +1123,10 @@ const urlt = response.url;
     console.log(tbkToken);
 
     if (token && !tbkToken) {//Flujo 1
-      const commitResponse = await WebpayPlus.Transaction.commit(token);
+      IntegrationCommerceCodes.WEBPAY_PLUS = process.env.TBKAPIKEYID;
+      IntegrationApiKeys.WEBPAY = process.env.TBKAPIKEYSECRET;
+      const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
+      const commitResponse = await tx.commit(token);
       console.log(commitResponse);
     }
 
