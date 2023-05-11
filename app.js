@@ -1181,8 +1181,6 @@ const urlt = response.url;
     saldo=0;
   }
 
-  try{
-
     if (token && !tbkToken) {//Flujo 1
       const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
       console.log(commitResponse, '--> commit response')
@@ -1204,10 +1202,7 @@ const urlt = response.url;
       console.log('Cae en el else');
         res.redirect('/failed');
       }
-    } catch(err){
-      console.log('Cae en el catch');
-      res.redirect('/failed')
-    }
+ 
   })
 
   app.get("/pago",async function(req,res){
@@ -1284,8 +1279,6 @@ const urlt = response.url;
   }
 
   // Si la recarga es exitosa
-  try{
-
     if (token && !tbkToken) {//Flujo 1
       const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
       console.log(commitResponse);
@@ -1308,10 +1301,7 @@ const urlt = response.url;
         console.log('else failed')
         res.redirect('/failed')
       }
-    } catch(err){
-      console.log('else catch')
-      res.redirect('/failed')
-    }
+
   });
 
   // Despues de recargar si todo sale ok
