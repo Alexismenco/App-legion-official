@@ -1120,6 +1120,11 @@ const urlt = response.url;
     console.log('=============GET===============');
     console.log(tbkToken);
 
+    if (token && !tbkToken) {//Flujo 1
+      const commitResponse = await new WebpayPlus.Transaction().commit(token);
+      console.log(commitResponse);
+    }
+
     var rolAdmin=req.headers.cookie || false ;
 
     // obtener email
@@ -1186,8 +1191,6 @@ const urlt = response.url;
 
   // Si la recarga es exitosa
     if (token && !tbkToken) {//Flujo 1
-      const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
-      console.log(commitResponse);
       if(commitResponse.status=='AUTHORIZED'){
         var saldoTotal= commitResponse.amount + parseInt(saldo);
         console.log(saldoTotal);
@@ -1198,7 +1201,7 @@ const urlt = response.url;
         try{
           respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
         } catch(err){
-            console.log("Error consulta: "+err.message);
+            console.log("Error cargar saldo: "+err.message);
         }
         console.log('en recarga')
         res.redirect('/recarga')
