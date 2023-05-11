@@ -1114,7 +1114,7 @@ const urlt = response.url;
 
   app.get("/pago",async function(req,res){
     let params = req.method === 'GET' ? req.query : req.body;
-    console.log(req);
+    console.log(req.body);
     console.log('=============REQ===============');
     let token = req.body.token_ws;
     let tbkToken = params.TBK_TOKEN;
@@ -1123,7 +1123,7 @@ const urlt = response.url;
     console.log(tbkToken);
 
     if (token && !tbkToken) {//Flujo 1
-      const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
+      const commitResponse = await WebpayPlus.Transaction.commit(token);
       console.log(commitResponse);
     }
 
