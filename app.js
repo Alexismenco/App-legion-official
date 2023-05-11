@@ -1099,6 +1099,9 @@ let monto = entero.toString() + decimal.toString().slice(1);
  let buyOrder = "O-" + Math.floor(Math.random() * 10000) + 1;
  let sessionId = "S-" + Math.floor(Math.random() * 10000) + 1;
 
+ console.log('buy Order ', buyOrder);
+ console.log('sesion ', sessionId);
+
 const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
 const response = await tx.create(buyOrder, sessionId, monto, process.env.DIRECCIONRETORNO +'pago');
 console.log(response)
