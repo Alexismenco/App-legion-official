@@ -1101,6 +1101,7 @@ let monto = entero.toString() + decimal.toString().slice(1);
 
 const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Production));
 const response = await tx.create(buyOrder, sessionId, monto, process.env.DIRECCIONRETORNO +'pago');
+console.log(response)
 
 const token = response.token;
 const urlt = response.url;
@@ -1114,105 +1115,8 @@ const urlt = response.url;
     let token = params.token_ws;
     let tbkToken = params.TBK_TOKEN;
     console.log(token);
-    console.log('============================');
+    console.log('============POST================');
     console.log(tbkToken);
-
-    var rolAdmin=req.headers.cookie || false ;
-
-    // obtener email
-  var email = await jwt.obtenerEmail(rolAdmin);
-  
-  // Consulta saldo
-  var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
-  const parametros6=[email];
-  var respuestaSaldo;
-  try{
-    respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
-  } catch(err){
-      console.log("Error consulta: "+err.message);
-  }
-  var saldo;
-  
-  if(respuestaSaldo.rows[0]==undefined){
-    saldo=0;
-    res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
-    res.redirect("/login");
-  }else{
-    saldo = respuestaSaldo.rows[0].Saldo;
-  
-    // Quitar decimales a saldo
-    var saldoFinal=''
-    var primerPunto=false;
-    for (i =0; i <= saldo.length ; i++) { 
-                                  
-      if(saldo[i]=='.'){
-        primerPunto=true;
-      }
-      if(primerPunto==false && saldo[i]!=undefined){
-        saldoFinal+=saldo[i];
-      }
-    }
-    saldo=saldoFinal
-  }
-  
-  if(rolAdmin == false){
-    saldo=0;
-  }
-  
-  // Consulta foto perfil
-  var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
-  const parametros15=[email];
-  var respuestaFotoPerfil;
-  try{
-    respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
-  } catch(err){
-      console.log("Error consulta: "+err.message);
-  }
-  var fotoPerfil;
-  try{
-    fotoPerfil=respuestaFotoPerfil.rows[0];
-  }catch(err){
-    console.log("Error consulta: "+err.message);
-    fotoPerfil=null;
-  }
-  
-  var fondo ='inicio/IMAGEN INICIO FONDO.png'
-  if(saldo=='0undefined'){
-    saldo=0;
-  }
-
-    if (token && !tbkToken) {//Flujo 1
-      const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
-      console.log(commitResponse, '--> commit response')
-      if(commitResponse.status=='AUTHORIZED'){
-        var saldoTotal= commitResponse.amount + parseInt(saldo);
-        console.log(saldoTotal)
-
-        var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
-        const parametros18=[saldoTotal, email];
-        var respuestaNuevo;
-        try{
-          respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
-        } catch(err){
-            console.log("Error consulta: "+err.message);
-        }
-        res.redirect('/recarga')
-      } 
-      }else{//Flujo 2
-      console.log('Cae en el else');
-        res.redirect('/failed');
-      }
- 
-  })
-
-  app.get("/pago",async function(req,res){
-    let params = req.method === 'GET' ? req.query : req.body;
-    let token = params.token_ws;
-    let tbkToken = params.TBK_TOKEN;
-    console.log(token);
-    console.log('============================');
-    console.log(tbkToken);
-
 
     var rolAdmin=req.headers.cookie || false ;
 
@@ -1301,7 +1205,103 @@ const urlt = response.url;
         console.log('else failed')
         res.redirect('/failed')
       }
+  })
 
+  app.get("/pago",async function(req,res){
+    let params = req.method === 'GET' ? req.query : req.body;
+    let token = params.token_ws;
+    let tbkToken = params.TBK_TOKEN;
+    console.log(token);
+    console.log('=============GET===============');
+    console.log(tbkToken);
+
+    var rolAdmin=req.headers.cookie || false ;
+
+    // obtener email
+  var email = await jwt.obtenerEmail(rolAdmin);
+  
+  // Consulta saldo
+  var consultaSaldo='SELECT "Saldo" from "Usuarios" WHERE "Email"=$1'
+  const parametros6=[email];
+  var respuestaSaldo;
+  try{
+    respuestaSaldo = await conexion.query(consultaSaldo,parametros6);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var saldo;
+  
+  if(respuestaSaldo.rows[0]==undefined){
+    saldo=0;
+    res.cookie(process.env.JWT_COOKIE,"",{httpOnly:true,maxAge:1});
+    res.redirect("/login");
+  }else{
+    saldo = respuestaSaldo.rows[0].Saldo;
+  
+    // Quitar decimales a saldo
+    var saldoFinal=''
+    var primerPunto=false;
+    for (i =0; i <= saldo.length ; i++) { 
+                                  
+      if(saldo[i]=='.'){
+        primerPunto=true;
+      }
+      if(primerPunto==false && saldo[i]!=undefined){
+        saldoFinal+=saldo[i];
+      }
+    }
+    saldo=saldoFinal
+  }
+  
+  if(rolAdmin == false){
+    saldo=0;
+  }
+  
+  // Consulta foto perfil
+  var consultaFoto='SELECT "Foto_perfil" FROM "Usuarios" WHERE "Email"=$1'
+  const parametros15=[email];
+  var respuestaFotoPerfil;
+  try{
+    respuestaFotoPerfil = await conexion.query(consultaFoto,parametros15);
+  } catch(err){
+      console.log("Error consulta: "+err.message);
+  }
+  var fotoPerfil;
+  try{
+    fotoPerfil=respuestaFotoPerfil.rows[0];
+  }catch(err){
+    console.log("Error consulta: "+err.message);
+    fotoPerfil=null;
+  }
+  
+  var fondo ='inicio/IMAGEN INICIO FONDO.png'
+  if(saldo=='0undefined'){
+    saldo=0;
+  }
+
+  // Si la recarga es exitosa
+    if (token && !tbkToken) {//Flujo 1
+      const commitResponse = await (new WebpayPlus.Transaction()).commit(token);
+      console.log(commitResponse);
+      if(commitResponse.status=='AUTHORIZED'){
+        var saldoTotal= commitResponse.amount + parseInt(saldo);
+        console.log(saldoTotal);
+
+        var nuevoSaldo='UPDATE "Usuarios" SET  "Saldo"=$1 WHERE "Email"=$2'
+        const parametros18=[saldoTotal, email];
+        var respuestaNuevo;
+        try{
+          respuestaNuevo = await conexion.query(nuevoSaldo,parametros18);
+        } catch(err){
+            console.log("Error consulta: "+err.message);
+        }
+        console.log('en recarga')
+        res.redirect('/recarga')
+      } 
+      }else{//Flujo 2
+        console.log('else failed')
+        res.redirect('/failed')
+      }
   });
 
   // Despues de recargar si todo sale ok
