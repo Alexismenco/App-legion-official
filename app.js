@@ -1114,9 +1114,9 @@ const urlt = response.url;
 
   app.get("/pago",async function(req,res){
     let params = req.method === 'GET' ? req.query : req.body;
-    console.log(req.body);
+    console.log(req.query);
     console.log('=============REQ===============');
-    let token = req.body.token_ws;
+    let token = req.query.token_ws;
     let tbkToken = params.TBK_TOKEN;
     console.log(token);
     console.log('=============GET===============');
